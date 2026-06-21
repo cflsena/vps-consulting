@@ -44,7 +44,7 @@ class DefaultOrderItemRepositoryIT {
     @AfterEach
     void cleanup() {
         createdOrderIds.forEach(id -> {
-            orderItemJpaRepository.deleteAll(orderItemJpaRepository.findByOrderId(id, Pageable.unpaged()).getContent());
+            orderItemJpaRepository.deleteAll(orderItemJpaRepository.findAllByOrderId(id, Pageable.unpaged()).getContent());
             orderJpaRepository.deleteById(id);
         });
         createdOrderIds.clear();

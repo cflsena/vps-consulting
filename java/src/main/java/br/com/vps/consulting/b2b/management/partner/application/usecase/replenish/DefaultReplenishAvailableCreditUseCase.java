@@ -1,23 +1,21 @@
 package br.com.vps.consulting.b2b.management.partner.application.usecase.replenish;
 
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerCredit;
+import br.com.vps.consulting.b2b.management.partner.domain.PartnerCreditRepository;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerRepository;
 import br.com.vps.consulting.b2b.management.partner.domain.exception.InvalidCreditReplenishmentException;
 import br.com.vps.consulting.b2b.management.partner.domain.exception.PartnerNotFoundException;
+import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
 import jakarta.inject.Named;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.math.BigDecimal;
 
 @Slf4j
 @Named
 @RequiredArgsConstructor
 public class DefaultReplenishAvailableCreditUseCase implements ReplenishAvailableCreditUseCase {
 
-    private final PartnerRepository partnerRepository;
+    private final PartnerCreditRepository partnerCreditRepository;
 
     @Override
     @Transactional
@@ -26,17 +24,17 @@ public class DefaultReplenishAvailableCreditUseCase implements ReplenishAvailabl
         log.info("Replenishing available credit [partnerId={}, amount={}]", input.partnerId(), input.amount());
 
         final var partnerId = PartnerId.from(input.partnerId());
-        final var current = partnerRepository.findCreditById(partnerId)
+        final var current = partnerCreditRepository.findById(partnerId)
                 .orElseThrow(() -> new PartnerNotFoundException(input.partnerId()));
 
-        final var maxReplenishment = current.creditLimit().subtract(current.availableBalance());
-        if (input.amount().compareTo(maxReplenishment) > 0) {
+        final var maxReplenishment = current.getCreditLimit().subtract(current.getAvailableBalance());
+        if (maxReplenishment.isLessThan(Money.of(input.amount()))) {
             log.warn("Replenishment exceeds maximum allowed [partnerId={}, amount={}, maxAllowed={}]",
                     input.partnerId(), input.amount(), maxReplenishment);
-            throw new InvalidCreditReplenishmentException(input.partnerId(), input.amount(), maxReplenishment);
+            throw new InvalidCreditReplenishmentException(input.partnerId(), input.amount(), maxReplenishment.value());
         }
 
-        partnerRepository.refundCredit(partnerId, input.amount());
+        partnerCreditRepository.refundCredit(partnerId, input.amount());
 
         log.info("Credit replenished successfully [partnerId={}, amount={}]", input.partnerId(), input.amount());
 

@@ -15,7 +15,7 @@ public class DefaultListPartnersUseCase implements ListPartnersUseCase {
 
     @Override
     public PageCustom<PartnerListOutput> execute(final ListPartnersInput input) {
-        log.debug("Listing partners [page={}, size={}]", input.pageNumber(), input.pageSize());
+        log.info("Listing partners [page={}, size={}]", input.pageNumber(), input.pageSize());
         final var page = partnerRepository.findAll(input.pageSize(), input.pageNumber());
         return PartnerListOutput.from(page);
     }

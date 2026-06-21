@@ -19,7 +19,7 @@ public class DefaultOrderItemRepository implements OrderItemRepository {
     @Override
     public PageCustom<OrderItem> findByOrderId(final OrderId orderId, final long pageSize, final long pageNumber) {
         final var pageable = PageRequest.of((int) pageNumber, (int) pageSize);
-        return OrderItemMapper.toPage(orderItemJpaRepository.findByOrderId(orderId.value(), pageable));
+        return OrderItemMapper.toPage(orderItemJpaRepository.findAllByOrderId(orderId.value(), pageable));
     }
 
 }

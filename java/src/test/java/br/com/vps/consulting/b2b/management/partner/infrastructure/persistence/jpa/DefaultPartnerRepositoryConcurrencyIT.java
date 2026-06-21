@@ -22,7 +22,6 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -99,7 +98,7 @@ class DefaultPartnerRepositoryConcurrencyIT {
                 .createdAt(Instant.now())
                 .build());
         partnerCreditJpaRepository.save(PartnerCreditEntity.builder()
-                .partnerId(id)
+                .id(id)
                 .creditLimit(creditLimit)
                 .availableBalance(creditLimit)
                 .reservedBalance(BigDecimal.ZERO)

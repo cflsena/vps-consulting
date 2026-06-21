@@ -41,7 +41,7 @@ public class DefaultOrderRepository implements OrderRepository {
         return orderJpaRepository.findById(id.value())
                 .map(entity -> {
                     final List<OrderItem> items = orderItemJpaRepository
-                            .findByOrderId(entity.getId(), Pageable.unpaged())
+                            .findAllByOrderId(entity.getId(), Pageable.unpaged())
                             .map(OrderItemMapper::toDomain)
                             .toList();
                     return OrderMapper.toDomain(entity, items);
@@ -60,13 +60,7 @@ public class DefaultOrderRepository implements OrderRepository {
         final Pageable pageable = PageRequest.of((int) pageNumber, (int) pageSize,
                 Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        return OrderMapper.toPage(orderJpaRepository.findAll(spec, pageable), entity -> {
-            final List<OrderItem> items = orderItemJpaRepository
-                    .findByOrderId(entity.getId(), Pageable.unpaged())
-                    .map(OrderItemMapper::toDomain)
-                    .toList();
-            return OrderMapper.toDomain(entity, items);
-        });
+        return OrderMapper.toPage(orderJpaRepository.findAll(spec, pageable));
     }
 
 }

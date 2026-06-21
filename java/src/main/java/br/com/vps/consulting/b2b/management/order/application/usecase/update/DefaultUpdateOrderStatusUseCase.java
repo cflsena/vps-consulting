@@ -12,6 +12,9 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
+import java.util.UUID;
+
 @Slf4j
 @Named
 @RequiredArgsConstructor
@@ -42,10 +45,25 @@ public class DefaultUpdateOrderStatusUseCase implements UpdateOrderStatusUseCase
         log.info("Order status updated [orderId={}, from={}, to={}, partnerId={}]",
                 order.getId().value(), previousStatus, currentStatus, partnerId);
 
+        processCredit(command, previousStatus, currentStatus, partnerId, amount);
+
+        final var event = currentStatus == OrderStatus.CANCELED
+                ? OrderStatusChanged.ofCancellation(order.getId().value(), partnerId, previousStatus, amount, currency)
+                : OrderStatusChanged.of(order.getId().value(), partnerId, previousStatus, currentStatus);
+
+        eventPublisher.publish(event);
+
+    }
+
+    private void processCredit(UpdateOrderStatusInput command, OrderStatus previousStatus, OrderStatus currentStatus, UUID partnerId, BigDecimal amount) {
+
         if (previousStatus == OrderStatus.PENDING && currentStatus == OrderStatus.APPROVED) {
             log.info("Debiting credit reservation [orderId={}, partnerId={}, amount={}]", command.orderId(), partnerId, amount);
             partnerCreditService.debitReservation(partnerId, amount);
-        } else if (currentStatus == OrderStatus.CANCELED) {
+            return;
+        }
+
+        if (currentStatus == OrderStatus.CANCELED) {
             if (previousStatus == OrderStatus.PENDING) {
                 log.info("Releasing credit reservation [orderId={}, partnerId={}, amount={}]", command.orderId(), partnerId, amount);
                 partnerCreditService.releaseReservation(partnerId, amount);
@@ -54,12 +72,6 @@ public class DefaultUpdateOrderStatusUseCase implements UpdateOrderStatusUseCase
                 partnerCreditService.refundDebit(partnerId, amount);
             }
         }
-
-        final var event = currentStatus == OrderStatus.CANCELED
-                ? OrderStatusChanged.ofCancellation(order.getId().value(), partnerId, previousStatus, amount, currency)
-                : OrderStatusChanged.of(order.getId().value(), partnerId, previousStatus, currentStatus);
-
-        eventPublisher.publish(event);
 
     }
 

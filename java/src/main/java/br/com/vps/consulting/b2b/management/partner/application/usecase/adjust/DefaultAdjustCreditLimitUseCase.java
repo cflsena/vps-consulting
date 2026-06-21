@@ -1,23 +1,21 @@
 package br.com.vps.consulting.b2b.management.partner.application.usecase.adjust;
 
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerCredit;
+import br.com.vps.consulting.b2b.management.partner.domain.PartnerCreditRepository;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerRepository;
 import br.com.vps.consulting.b2b.management.partner.domain.exception.CreditLimitBelowReservationException;
 import br.com.vps.consulting.b2b.management.partner.domain.exception.PartnerNotFoundException;
+import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
 import jakarta.inject.Named;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
-import java.math.BigDecimal;
 
 @Slf4j
 @Named
 @RequiredArgsConstructor
 public class DefaultAdjustCreditLimitUseCase implements AdjustCreditLimitUseCase {
 
-    private final PartnerRepository partnerRepository;
+    private final PartnerCreditRepository partnerCreditRepository;
 
     @Override
     @Transactional
@@ -26,18 +24,18 @@ public class DefaultAdjustCreditLimitUseCase implements AdjustCreditLimitUseCase
         log.info("Adjusting credit limit [partnerId={}, newCreditLimit={}]", input.partnerId(), input.newCreditLimit());
 
         final var partnerId = PartnerId.from(input.partnerId());
-        final var current = partnerRepository.findCreditById(partnerId)
+        final var current = partnerCreditRepository.findById(partnerId)
                 .orElseThrow(() -> new PartnerNotFoundException(input.partnerId()));
 
-        final var debited = current.creditLimit().subtract(current.availableBalance());
-        final var minimumLimit = debited.add(current.reservedBalance());
-        if (input.newCreditLimit().compareTo(minimumLimit) < 0) {
-            log.warn("Cannot reduce credit limit below committed amount [partnerId={}, newLimit={}, minimumAllowed={}]",
+        final var debited = current.getCreditLimit().subtract(current.getAvailableBalance());
+        final var minimumLimit = debited.add(current.getReservedBalance());
+        if (minimumLimit.isGreaterThan(Money.of(input.newCreditLimit()))) {
+            log.error("Cannot reduce credit limit below committed amount [partnerId={}, newLimit={}, minimumAllowed={}]",
                     input.partnerId(), input.newCreditLimit(), minimumLimit);
-            throw new CreditLimitBelowReservationException(input.partnerId(), input.newCreditLimit(), minimumLimit);
+            throw new CreditLimitBelowReservationException(input.partnerId(), input.newCreditLimit(), minimumLimit.value());
         }
 
-        partnerRepository.adjustCreditLimit(partnerId, input.newCreditLimit());
+        partnerCreditRepository.adjustCreditLimit(partnerId, input.newCreditLimit());
 
         log.info("Credit limit adjusted successfully [partnerId={}, newCreditLimit={}]",
                 input.partnerId(), input.newCreditLimit());

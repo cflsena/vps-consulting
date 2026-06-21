@@ -54,10 +54,10 @@ public class PartnerController implements PartnerApi {
         final var credit = findPartnerCreditByIdUseCase.execute(id);
         return ResponseEntity.ok(new PartnerCreditResponse(
                 id,
-                credit.creditLimit(),
-                credit.availableBalance(),
-                credit.reservedBalance(),
-                credit.updatedAt().atOffset(ManagementConstants.BRASILIA_TIME_ZONE)
+                credit.getCreditLimit().value(),
+                credit.getAvailableBalance().value(),
+                credit.getReservedBalance().value(),
+                credit.getUpdatedAt().atOffset(ManagementConstants.BRASILIA_TIME_ZONE)
         ));
     }
 

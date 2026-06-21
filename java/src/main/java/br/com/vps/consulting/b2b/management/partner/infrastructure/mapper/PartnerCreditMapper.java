@@ -1,22 +1,30 @@
 package br.com.vps.consulting.b2b.management.partner.infrastructure.mapper;
 
-import br.com.vps.consulting.b2b.management.partner.domain.Partner;
+import br.com.vps.consulting.b2b.management.partner.domain.PartnerCredit;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerCreditEntity;
-
-import java.math.BigDecimal;
-import java.time.Instant;
 
 public final class PartnerCreditMapper {
 
-    private PartnerCreditMapper(){}
+    private PartnerCreditMapper() {
+    }
 
-    public static PartnerCreditEntity toEntity(final Partner partner) {
+    public static PartnerCreditEntity toEntity(final PartnerCredit partner) {
         return PartnerCreditEntity.builder()
-                .partnerId(partner.getId().value())
+                .id(partner.getId().value())
                 .creditLimit(partner.getCreditLimit().value())
-                .availableBalance(partner.getCreditLimit().value())
-                .reservedBalance(BigDecimal.ZERO)
-                .updatedAt(Instant.now())
+                .availableBalance(partner.getAvailableBalance().value())
+                .reservedBalance(partner.getReservedBalance().value())
+                .updatedAt(partner.getUpdatedAt())
+                .build();
+    }
+
+    public static PartnerCredit toDomain(final PartnerCreditEntity partner) {
+        return PartnerCredit.builder()
+                .id(partner.getId())
+                .creditLimit(partner.getCreditLimit())
+                .availableBalance(partner.getAvailableBalance())
+                .reservedBalance(partner.getReservedBalance())
+                .updatedAt(partner.getUpdatedAt())
                 .build();
     }
 

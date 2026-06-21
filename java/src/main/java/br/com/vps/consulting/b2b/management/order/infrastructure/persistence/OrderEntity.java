@@ -17,11 +17,11 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Entity
-@Table(name = "\"order\"")
 @Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "\"order\"")
 public class OrderEntity {
 
     @Id

@@ -46,7 +46,7 @@ class DefaultOrderRepositoryIT {
     @AfterEach
     void cleanup() {
         createdOrderIds.forEach(id -> {
-            orderItemJpaRepository.deleteAll(orderItemJpaRepository.findByOrderId(id, Pageable.unpaged()).getContent());
+            orderItemJpaRepository.deleteAll(orderItemJpaRepository.findAllByOrderId(id, Pageable.unpaged()).getContent());
             orderJpaRepository.deleteById(id);
         });
         createdOrderIds.clear();
@@ -66,7 +66,7 @@ class DefaultOrderRepositoryIT {
         final var savedEntity = orderJpaRepository.findById(order.getId().value()).orElseThrow();
         assertThat(savedEntity.getPartnerId()).isEqualTo(partnerId);
         assertThat(savedEntity.getTotalAmount()).isEqualByComparingTo("50.00");
-        final var savedItems = orderItemJpaRepository.findByOrderId(order.getId().value(), Pageable.unpaged());
+        final var savedItems = orderItemJpaRepository.findAllByOrderId(order.getId().value(), Pageable.unpaged());
         assertThat(savedItems.getContent()).hasSize(1);
         assertThat(savedItems.getContent().get(0).getProductId()).isEqualTo("PROD-1");
     }

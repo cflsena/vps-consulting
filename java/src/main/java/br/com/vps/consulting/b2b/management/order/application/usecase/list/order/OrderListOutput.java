@@ -2,7 +2,6 @@ package br.com.vps.consulting.b2b.management.order.application.usecase.list.orde
 
 import br.com.vps.consulting.b2b.management.order.domain.Order;
 import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 
@@ -14,22 +13,11 @@ import static br.com.vps.consulting.b2b.management.shared.core.utils.ManagementC
 
 @Builder(access = AccessLevel.PRIVATE)
 public record OrderListOutput(
-        @Schema(description = "Identificador único do pedido")
         UUID id,
-
-        @Schema(description = "ID do parceiro vinculado ao pedido")
         UUID partnerId,
-
-        @Schema(description = "Valor total do pedido")
         BigDecimal totalAmount,
-
-        @Schema(description = "Status atual do pedido", allowableValues = {"PENDING", "APPROVED", "IN_PROCESS", "SENT", "DELIVERED", "CANCELED"})
         String status,
-
-        @Schema(description = "Data e hora de criação do pedido (fuso horário Brasília, GMT-3)")
         OffsetDateTime createdAt,
-
-        @Schema(description = "Data e hora da última atualização do pedido (fuso horário Brasília, GMT-3)")
         OffsetDateTime updatedAt
 ) {
 

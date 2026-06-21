@@ -299,7 +299,7 @@ Swagger disponível em `http://localhost:8080/swagger-ui/index.html`.
 
 ### Parceiros disponíveis após o seed
 
-O Flyway aplica automaticamente o script `V2__seed_partners.sql` na inicialização. Três parceiros já estão cadastrados e prontos para uso:
+O Flyway aplica automaticamente o script `V1__05_seed_partners.sql` na inicialização. Três parceiros já estão cadastrados e prontos para uso:
 
 | Nome | ID | Documento (CNPJ) | Limite de Crédito | Saldo Disponível |
 |---|---|---|---|---|

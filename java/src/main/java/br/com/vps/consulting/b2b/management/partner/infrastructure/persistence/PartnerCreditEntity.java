@@ -22,8 +22,8 @@ import java.util.UUID;
 public class PartnerCreditEntity {
 
     @Id
-    @Column(name = "partner_id")
-    private UUID partnerId;
+    @Column(name = "id")
+    private UUID id;
 
     @Column(name = "credit_limit", nullable = false)
     private BigDecimal creditLimit;

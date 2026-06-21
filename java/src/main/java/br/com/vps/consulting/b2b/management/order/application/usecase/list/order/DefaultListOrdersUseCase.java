@@ -16,7 +16,7 @@ public class DefaultListOrdersUseCase implements ListOrdersUseCase {
 
     @Override
     public PageCustom<OrderListOutput> execute(final ListOrdersInput input) {
-        log.debug("Listing orders [from={}, to={}, status={}, partnerId={}, page={}, size={}]",
+        log.info("Listing orders [from={}, to={}, status={}, partnerId={}, page={}, size={}]",
                 input.from(), input.to(), input.status(), input.partnerId(), input.pageNumber(), input.pageSize());
 
         if (input.from() != null && input.to() != null && input.from().isAfter(input.to())) {

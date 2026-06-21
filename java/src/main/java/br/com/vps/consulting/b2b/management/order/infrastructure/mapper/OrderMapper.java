@@ -10,7 +10,6 @@ import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
-import java.util.function.Function;
 
 public final class OrderMapper {
 
@@ -39,14 +38,13 @@ public final class OrderMapper {
                 .build();
     }
 
-    public static PageCustom<Order> toPage(final Page<OrderEntity> page, final Function<OrderEntity, Order> fn) {
+    public static PageCustom<Order> toPage(final Page<OrderEntity> page) {
         return PageCustom.<Order>builder()
                 .pageNumber(page.getNumber())
                 .pageSize(page.getSize())
                 .numberOfElements(page.getNumberOfElements())
                 .totalPages(page.getTotalPages())
                 .totalElements(page.getTotalElements())
-                .items(page.getContent().stream().map(fn).toList())
                 .build();
     }
 

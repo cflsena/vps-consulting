@@ -16,9 +16,8 @@ public class DefaultListOrderItemsUseCase implements ListOrderItemsUseCase {
 
     @Override
     public PageCustom<OrderItemListOutput> execute(final ListOrderItemsInput input) {
-        log.debug("Listing items for order [orderId={}, page={}, size={}]",
+        log.info("Listing items for order [orderId={}, page={}, size={}]",
                 input.orderId(), input.pageNumber(), input.pageSize());
-
         final var page = orderItemRepository.findByOrderId(
                 OrderId.from(input.orderId()),
                 input.pageSize(),

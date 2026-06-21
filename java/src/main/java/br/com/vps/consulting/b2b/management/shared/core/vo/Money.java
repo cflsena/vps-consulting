@@ -1,6 +1,7 @@
 package br.com.vps.consulting.b2b.management.shared.core.vo;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.Objects;
 
 public record Money(BigDecimal value, String currency) implements ValueObject {
@@ -16,16 +17,24 @@ public record Money(BigDecimal value, String currency) implements ValueObject {
     }
 
     public static Money of(final BigDecimal amount) {
-        return new Money(amount, DEFAULT_CURRENCY);
+        return new Money(amount.setScale(2, RoundingMode.HALF_EVEN), DEFAULT_CURRENCY);
     }
 
     public static Money of(final String amount) {
-        return new Money(new BigDecimal(amount), DEFAULT_CURRENCY);
+        return new Money(new BigDecimal(amount).setScale(2, RoundingMode.HALF_EVEN), DEFAULT_CURRENCY);
+    }
+
+    public static Money zero() {
+        return new Money(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN), DEFAULT_CURRENCY);
     }
 
     public Money add(final Money other) {
         assertSameCurrency(other);
         return new Money(this.value.add(other.value), this.currency);
+    }
+
+    public Money subtract(final Money other) {
+        return null;
     }
 
     public Money multiply(final int quantity) {
@@ -38,6 +47,10 @@ public record Money(BigDecimal value, String currency) implements ValueObject {
     public boolean isGreaterThan(final Money other) {
         assertSameCurrency(other);
         return this.value.compareTo(other.value) > 0;
+    }
+
+    public boolean isLessThan(final Money other) {
+        return false;
     }
 
     public boolean isZero() {

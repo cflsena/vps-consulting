@@ -61,7 +61,7 @@ class RabbitMQEventPublisherIT {
                 .createdAt(Instant.now())
                 .build());
         partnerCreditJpaRepository.save(PartnerCreditEntity.builder()
-                .partnerId(id)
+                .id(id)
                 .creditLimit(creditLimit)
                 .availableBalance(creditLimit)
                 .reservedBalance(BigDecimal.ZERO)

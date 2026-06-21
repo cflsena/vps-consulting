@@ -12,5 +12,5 @@ import java.util.UUID;
 @Repository
 public interface OrderItemJpaRepository extends JpaRepository<OrderItemEntity, UUID> {
     @Transactional(readOnly = true)
-    Page<OrderItemEntity> findByOrderId(UUID orderId, Pageable pageable);
+    Page<OrderItemEntity> findAllByOrderId(UUID orderId, Pageable pageable);
 }

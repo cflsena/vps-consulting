@@ -48,7 +48,7 @@ class OrderControllerIT {
     @AfterEach
     void cleanup() {
         createdOrderIds.forEach(id -> {
-            orderItemRepo.deleteAll(orderItemRepo.findByOrderId(id, Pageable.unpaged()).getContent());
+            orderItemRepo.deleteAll(orderItemRepo.findAllByOrderId(id, Pageable.unpaged()).getContent());
             orderRepo.deleteById(id);
         });
         createdOrderIds.clear();

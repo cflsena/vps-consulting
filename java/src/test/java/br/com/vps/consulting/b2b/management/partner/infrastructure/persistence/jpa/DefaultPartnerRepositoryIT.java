@@ -192,7 +192,7 @@ class DefaultPartnerRepositoryIT {
                 .createdAt(Instant.now())
                 .build());
         partnerCreditJpaRepository.save(PartnerCreditEntity.builder()
-                .partnerId(partnerId)
+                .id(partnerId)
                 .creditLimit(new BigDecimal("1000.00"))
                 .availableBalance(new BigDecimal(availableBalance))
                 .reservedBalance(new BigDecimal(reservedBalance))

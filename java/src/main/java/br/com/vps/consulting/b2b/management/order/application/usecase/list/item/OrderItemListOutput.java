@@ -11,16 +11,9 @@ import java.util.UUID;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record OrderItemListOutput(
-        @Schema(description = "Identificador único do item do pedido")
         UUID id,
-
-        @Schema(description = "Identificador do produto")
         String productId,
-
-        @Schema(description = "Quantidade do item no pedido")
         Integer quantity,
-
-        @Schema(description = "Preço unitário do produto")
         BigDecimal unitPrice
 ) {
 

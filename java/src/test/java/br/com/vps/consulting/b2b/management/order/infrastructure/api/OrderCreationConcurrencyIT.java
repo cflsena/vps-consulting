@@ -54,7 +54,7 @@ class OrderCreationConcurrencyIT {
     @AfterEach
     void cleanup() {
         createdOrderIds.forEach(id -> {
-            orderItemRepo.deleteAll(orderItemRepo.findByOrderId(id, Pageable.unpaged()).getContent());
+            orderItemRepo.deleteAll(orderItemRepo.findAllByOrderId(id, Pageable.unpaged()).getContent());
             orderRepo.deleteById(id);
         });
         createdOrderIds.clear();
@@ -188,7 +188,7 @@ class OrderCreationConcurrencyIT {
                 .createdAt(Instant.now())
                 .build());
         creditRepo.save(PartnerCreditEntity.builder()
-                .partnerId(id)
+                .id(id)
                 .creditLimit(creditLimit)
                 .availableBalance(creditLimit)
                 .reservedBalance(BigDecimal.ZERO)
