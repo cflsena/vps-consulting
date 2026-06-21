@@ -4,7 +4,7 @@ import java.time.Instant
 import java.util.UUID
 
 data class EventMessage<T: DomainEvent>(
-    val eventId: UUID,
-    val occurredAt: Instant,
+    val eventId: UUID = UUID.randomUUID(),
+    val occurredAt: Instant = Instant.now(),
     val payload: T
 )
