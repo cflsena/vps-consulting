@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS partner (
 
 CREATE TABLE IF NOT EXISTS partner_balance (
     partner_id        UUID PRIMARY KEY REFERENCES partner(id),
-    total_balance     NUMERIC(19,2) NOT NULL DEFAULT 0 CHECK (total_balance >= 0),
+    total_credited    NUMERIC(19,2) NOT NULL DEFAULT 0 CHECK (total_credited >= 0),
+    total_debited     NUMERIC(19,2) NOT NULL DEFAULT 0 CHECK (total_debited >= 0),
     available_balance NUMERIC(19,2) NOT NULL DEFAULT 0 CHECK (available_balance >= 0),
     updated_at        TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT now()
 );

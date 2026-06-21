@@ -7,7 +7,8 @@ import java.time.Instant
 
 class PartnerBalance private constructor(
     id: PartnerId,
-    val totalBalance: Money,
+    val totalCredited: Money,
+    val totalDebited: Money,
     val availableBalance: Money,
     val updatedAt: Instant
 ) : Entity<PartnerId>(id) {
@@ -22,12 +23,14 @@ class PartnerBalance private constructor(
     companion object {
         fun with(
             id: PartnerId,
-            totalBalance: BigDecimal = BigDecimal.ZERO,
-            availableBalance: BigDecimal,
+            totalCredited: BigDecimal = BigDecimal.ZERO,
+            totalDebited: BigDecimal = BigDecimal.ZERO,
+            availableBalance: BigDecimal = BigDecimal.ZERO,
             updatedAt: Instant = Instant.now()
         ) = PartnerBalance(
             id = id,
-            totalBalance = Money.of(totalBalance),
+            totalCredited = Money.of(totalCredited),
+            totalDebited = Money.of(totalDebited),
             availableBalance = Money.of(availableBalance),
             updatedAt = updatedAt
         )

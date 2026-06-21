@@ -47,11 +47,11 @@ class PartnerControllerIT {
 
     private fun document() = UUID.randomUUID().toString().replace("-", "").take(14)
 
-    private fun createPartner(name: String = "Acme Corp", document: String = document(), availableBalance: String = "0.00"): UUID {
+    private fun createPartner(name: String = "Acme Corp", document: String = document()): UUID {
         val result = mockMvc.perform(
             post("/api/v1/b2b/partners")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"$name","document":"$document","availableBalance":$availableBalance}""")
+                .content("""{"name":"$name","document":"$document"}""")
         ).andReturn()
         val id = UUID.fromString(jsonMapper.readTree(result.response.contentAsString).get("id").stringValue())
         createdIds.add(id)
@@ -59,13 +59,13 @@ class PartnerControllerIT {
     }
 
     @Test
-    fun `should create partner and return 201 with the given available balance and zero total balance`() {
+    fun `should create partner and return 201 with all balances zeroed`() {
         val document = document()
 
         val result = mockMvc.perform(
             post("/api/v1/b2b/partners")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"Acme Corp","document":"$document","availableBalance":100.00}""")
+                .content("""{"name":"Acme Corp","document":"$document"}""")
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").exists())
@@ -76,8 +76,9 @@ class PartnerControllerIT {
 
         assertThat(partnerJpaRepository.findById(id)).isPresent
         val balance = partnerBalanceJpaRepository.findById(id).orElseThrow()
-        assertThat(balance.totalBalance).isEqualByComparingTo(java.math.BigDecimal.ZERO)
-        assertThat(balance.availableBalance).isEqualByComparingTo(java.math.BigDecimal("100.00"))
+        assertThat(balance.totalCredited).isEqualByComparingTo(java.math.BigDecimal.ZERO)
+        assertThat(balance.totalDebited).isEqualByComparingTo(java.math.BigDecimal.ZERO)
+        assertThat(balance.availableBalance).isEqualByComparingTo(java.math.BigDecimal.ZERO)
     }
 
     @Test
@@ -85,7 +86,7 @@ class PartnerControllerIT {
         mockMvc.perform(
             post("/api/v1/b2b/partners")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"","document":"${document()}","availableBalance":0.00}""")
+                .content("""{"name":"","document":"${document()}"}""")
         ).andExpect(status().isBadRequest)
     }
 
@@ -94,7 +95,7 @@ class PartnerControllerIT {
         mockMvc.perform(
             post("/api/v1/b2b/partners")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"Acme Corp","document":"","availableBalance":0.00}""")
+                .content("""{"name":"Acme Corp","document":""}""")
         ).andExpect(status().isBadRequest)
     }
 
@@ -104,7 +105,8 @@ class PartnerControllerIT {
 
         mockMvc.perform(get("/api/v1/b2b/partners/$id/balance"))
             .andExpect(status().isOk)
-            .andExpect(jsonPath("$.totalBalance").value(0))
+            .andExpect(jsonPath("$.totalCredited").value(0))
+            .andExpect(jsonPath("$.totalDebited").value(0))
             .andExpect(jsonPath("$.availableBalance").value(0))
     }
 

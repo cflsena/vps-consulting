@@ -11,8 +11,11 @@ data class FindPartnerBalanceResponse(
     @field:Schema(description = "ID único do parceiro")
     val partnerId: UUID,
 
-    @field:Schema(description = "Saldo total (histórico de créditos) do parceiro", example = "1000.00")
-    val totalBalance: BigDecimal,
+    @field:Schema(description = "Total creditado historicamente para o parceiro", example = "1000.00")
+    val totalCredited: BigDecimal,
+
+    @field:Schema(description = "Total debitado historicamente do parceiro", example = "250.00")
+    val totalDebited: BigDecimal,
 
     @field:Schema(description = "Saldo disponível para operações do parceiro", example = "750.50")
     val availableBalance: BigDecimal,
@@ -23,7 +26,8 @@ data class FindPartnerBalanceResponse(
     companion object {
         fun from(output: FindPartnerBalanceOutput) = FindPartnerBalanceResponse(
             partnerId = output.partnerId,
-            totalBalance = output.totalBalance,
+            totalCredited = output.totalCredited,
+            totalDebited = output.totalDebited,
             availableBalance = output.availableBalance,
             updatedAt = output.updatedAt.toBrazilianOffsetDateTime()
         )

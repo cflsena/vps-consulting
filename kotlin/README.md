@@ -4,7 +4,7 @@
 
 API REST para gestão de saldo de crédito de parceiros B2B através de transações de crédito e débito.
 
-O contexto de negócio: cada parceiro possui um saldo de crédito composto por `total_balance` (total já creditado historicamente) e `available_balance` (saldo livre para débito). Toda movimentação de saldo é registrada como uma `Transaction` (CREDIT ou DEBIT), criada com idempotência garantida por uma `idempotencyKey` única. O crédito/débito é aplicado de forma síncrona já no momento da criação, finalizando a transação como `COMPLETED` ou `FAILED`; um job de reconciliação assíncrono existe apenas como fallback para reprocessar transações que ficaram pendentes por falha inesperada no processamento síncrono.
+O contexto de negócio: cada parceiro possui um saldo de crédito composto por `total_credited` (total já creditado historicamente), `total_debited` (total já debitado historicamente) e `available_balance` (saldo livre para débito). Todo parceiro nasce com os três campos zerados — o saldo só passa a existir através de transações reais. Toda movimentação de saldo é registrada como uma `Transaction` (CREDIT ou DEBIT), criada com idempotência garantida por uma `idempotencyKey` única. O crédito/débito é aplicado de forma síncrona já no momento da criação, finalizando a transação como `COMPLETED` ou `FAILED`; um job de reconciliação assíncrono existe apenas como fallback para reprocessar transações que ficaram pendentes por falha inesperada no processamento síncrono.
 
 ---
 
@@ -13,12 +13,12 @@ O contexto de negócio: cada parceiro possui um saldo de crédito composto por `
 - **Código:** Aplicação de Clean Architecture com DDD em uma estrutura module-first (`partner/`, `transaction/`, `shared/`). Cada módulo tem suas próprias camadas de domain, application e infrastructure. O domínio (regras de negócio, entidades, eventos) não tem dependências externas.
 
 
-- **Modelo de saldo:** mais simples que um modelo de hold-and-capture — não há reserva de crédito. O saldo de um parceiro é gerenciado por dois campos: `total_balance` (soma histórica de créditos) e `available_balance` (saldo livre para débito). Cada tipo de transação dispara uma operação diferente:
+- **Modelo de saldo:** mais simples que um modelo de hold-and-capture — não há reserva de crédito. O saldo de um parceiro é gerenciado por três campos: `total_credited` (soma histórica de créditos), `total_debited` (soma histórica de débitos) e `available_balance` (saldo livre para débito). Um parceiro é sempre criado com os três campos zerados. Cada tipo de transação dispara uma operação diferente:
 
   | Tipo de Transação | Operação |
   |---|---|
-  | CREDIT | `total_balance += amount` e `available_balance += amount` |
-  | DEBIT | `available_balance -= amount` (somente se `available_balance >= amount`) |
+  | CREDIT | `total_credited += amount` e `available_balance += amount` |
+  | DEBIT | `total_debited += amount` e `available_balance -= amount` (somente se `available_balance >= amount`) |
 
 
 - **Concorrência sem locks explícitos:** assim como em qualquer cenário de alto volume de débitos simultâneos para o mesmo parceiro, ler o saldo, checar disponibilidade e depois atualizar cria uma race condition clássica. A abordagem adotada foi o **UPDATE condicional atômico** direto no PostgreSQL, em `PartnerBalanceJpaRepository`:
@@ -101,10 +101,10 @@ Documentação interativa disponível em `http://localhost:8080/swagger-ui/index
 **`POST /api/v1/b2b/partners`** — Cadastra um parceiro
 
 ```json
-{ "name": "Empresa X", "document": "12.345.678/0001-99", "availableBalance": 50000.00 }
+{ "name": "Empresa X", "document": "12.345.678/0001-99" }
 ```
 
-Cria o parceiro e inicializa o saldo com `total_balance = availableBalance` e `available_balance = availableBalance`. Retorna 201 com o UUID gerado. Falha com 400 se os campos forem inválidos ou 409 se o documento já existir.
+Cria o parceiro com `totalCredited`, `totalDebited` e `availableBalance` zerados — o saldo só passa a existir através de transações de crédito/débito reais. Retorna 201 com o UUID gerado. Falha com 400 se os campos forem inválidos ou 409 se o documento já existir.
 
 ---
 
@@ -113,7 +113,8 @@ Cria o parceiro e inicializa o saldo com `total_balance = availableBalance` e `a
 ```json
 {
   "partnerId": "uuid-do-parceiro",
-  "totalBalance": 50000.00,
+  "totalCredited": 50000.00,
+  "totalDebited": 15000.00,
   "availableBalance": 35000.00,
   "updatedAt": "2024-01-15T10:30:00Z"
 }
@@ -141,7 +142,7 @@ A ordem das operações importa:
 
 1. Valida os campos do request e a existência do parceiro
 2. Valida a unicidade da `idempotencyKey` — se já existir, lança `DuplicateTransactionException` (409)
-3. Tenta processar a transação imediatamente, na mesma requisição: o `CreditTransactionHandler` aplica `total_balance += amount` e `available_balance += amount` via UPDATE atômico, definindo o status final já nesta chamada
+3. Tenta processar a transação imediatamente, na mesma requisição: o `CreditTransactionHandler` aplica `total_credited += amount` e `available_balance += amount` via UPDATE atômico, definindo o status final já nesta chamada
 4. Persiste a `Transaction` com o status resultante (`COMPLETED` em caso de sucesso; `FAILED` em caso de falha de negócio)
 5. Se o status não for `PENDING`, publica `TransactionStatusChanged`
 6. Retorna 201 com `transactionId` e o status. Normalmente já vem `COMPLETED`/`FAILED`; `PENDING` só ocorre no caso raro de uma falha inesperada interromper o processamento síncrono, ficando a cargo da reconciliação assíncrona resolver depois
@@ -257,7 +258,7 @@ Swagger disponível em `http://localhost:8080/swagger-ui/index.html`.
 
 O Flyway aplica automaticamente o script `V2__seed_partners.sql` na inicialização. Dois parceiros já estão cadastrados e prontos para uso:
 
-| Nome | ID | Documento (CNPJ) | Saldo Total | Saldo Disponível |
-|---|---|---|---|---|
-| Empresa A | `1f2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d` | 11222333000181 | R$ 10.000,00 | R$ 10.000,00 |
-| Empresa B | `2a3b4c5d-6e7f-4b8c-9d0e-1f2a3b4c5d6e` | 44555666000162 | R$ 50.000,00 | R$ 50.000,00 |
+| Nome | ID | Documento (CNPJ) | Total Creditado | Total Debitado | Saldo Disponível |
+|---|---|---|---|---|---|
+| Empresa A | `1f2b3c4d-5e6f-4a7b-8c9d-0e1f2a3b4c5d` | 11222333000181 | R$ 10.000,00 | R$ 0,00 | R$ 10.000,00 |
+| Empresa B | `2a3b4c5d-6e7f-4b8c-9d0e-1f2a3b4c5d6e` | 44555666000162 | R$ 50.000,00 | R$ 0,00 | R$ 50.000,00 |

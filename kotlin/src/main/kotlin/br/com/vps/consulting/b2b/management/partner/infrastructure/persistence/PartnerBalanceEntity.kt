@@ -12,8 +12,11 @@ class PartnerBalanceEntity(
     @Column(name = "partner_id")
     val partnerId: UUID,
 
-    @Column(name = "total_balance", nullable = false)
-    val totalBalance: BigDecimal,
+    @Column(name = "total_credited", nullable = false)
+    val totalCredited: BigDecimal,
+
+    @Column(name = "total_debited", nullable = false)
+    val totalDebited: BigDecimal,
 
     @Column(name = "available_balance", nullable = false)
     val availableBalance: BigDecimal,

@@ -28,7 +28,6 @@ class PartnerController(
             CreatePartnerInput(
                 name = request.name,
                 document = request.document,
-                availableBalance = request.availableBalance
             )
         )
         return ResponseEntity.status(HttpStatus.CREATED).body(PartnerCreatedResponse(id))

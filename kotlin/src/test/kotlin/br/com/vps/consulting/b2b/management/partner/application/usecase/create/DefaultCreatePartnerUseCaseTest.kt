@@ -14,7 +14,6 @@ import org.mockito.kotlin.any
 import org.mockito.kotlin.argumentCaptor
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.math.BigDecimal
 
 @ExtendWith(MockitoExtension::class)
 class DefaultCreatePartnerUseCaseTest {
@@ -34,7 +33,7 @@ class DefaultCreatePartnerUseCaseTest {
 
     @Test
     fun `should create partner and return its id`() {
-        val input = CreatePartnerInput(name = "Acme Corp", document = "12345678000100", availableBalance = BigDecimal("100.00"))
+        val input = CreatePartnerInput(name = "Acme Corp", document = "12345678000100")
         val saved = Partner.with(name = input.name, document = input.document)
         whenever(partnerRepository.save(any())).thenReturn(saved)
 
@@ -45,7 +44,7 @@ class DefaultCreatePartnerUseCaseTest {
 
     @Test
     fun `should save a Partner built from the input's name and document`() {
-        val input = CreatePartnerInput(name = "Acme Corp", document = "12345678000100", availableBalance = BigDecimal("100.00"))
+        val input = CreatePartnerInput(name = "Acme Corp", document = "12345678000100")
         whenever(partnerRepository.save(any())).thenAnswer { it.arguments[0] as Partner }
 
         useCase.execute(input)
@@ -57,8 +56,8 @@ class DefaultCreatePartnerUseCaseTest {
     }
 
     @Test
-    fun `should save a PartnerBalance with the input's availableBalance for the created partner`() {
-        val input = CreatePartnerInput(name = "Acme Corp", document = "12345678000100", availableBalance = BigDecimal("100.00"))
+    fun `should save a PartnerBalance with zeroed balances for the created partner`() {
+        val input = CreatePartnerInput(name = "Acme Corp", document = "12345678000100")
         val saved = Partner.with(name = input.name, document = input.document)
         whenever(partnerRepository.save(any())).thenReturn(saved)
 
@@ -67,7 +66,9 @@ class DefaultCreatePartnerUseCaseTest {
         val captor = argumentCaptor<PartnerBalance>()
         verify(partnerBalanceRepository).save(captor.capture())
         assertThat(captor.firstValue.id).isEqualTo(saved.id)
-        assertThat(captor.firstValue.availableBalance.value).isEqualByComparingTo("100.00")
+        assertThat(captor.firstValue.totalCredited.value).isEqualByComparingTo("0.00")
+        assertThat(captor.firstValue.totalDebited.value).isEqualByComparingTo("0.00")
+        assertThat(captor.firstValue.availableBalance.value).isEqualByComparingTo("0.00")
     }
 
 }

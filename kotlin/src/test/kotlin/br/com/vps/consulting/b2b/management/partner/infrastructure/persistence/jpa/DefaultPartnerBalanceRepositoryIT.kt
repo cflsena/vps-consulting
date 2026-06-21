@@ -51,7 +51,8 @@ class DefaultPartnerBalanceRepositoryIT {
         val balance = adapter.findBalanceById(partnerId)
 
         assertThat(balance).isNotNull
-        assertThat(balance!!.totalBalance.value).isEqualByComparingTo("0.00")
+        assertThat(balance!!.totalCredited.value).isEqualByComparingTo("0.00")
+        assertThat(balance.totalDebited.value).isEqualByComparingTo("0.00")
         assertThat(balance.availableBalance.value).isEqualByComparingTo("100.00")
     }
 
@@ -61,22 +62,22 @@ class DefaultPartnerBalanceRepositoryIT {
     }
 
     @Test
-    fun `should creditBalance increase both totalBalance and availableBalance and return true`() {
+    fun `should creditBalance increase both totalCredited and availableBalance and return true`() {
         val partnerId = newPartnerId()
-        adapter.save(PartnerBalance.with(id = partnerId, availableBalance = BigDecimal.ZERO))
+        adapter.save(PartnerBalance.with(id = partnerId))
 
         val result = adapter.creditBalance(partnerId, Money.of(BigDecimal("50.00")))
 
         assertThat(result).isTrue()
         val balance = adapter.findBalanceById(partnerId)!!
-        assertThat(balance.totalBalance.value).isEqualByComparingTo("50.00")
+        assertThat(balance.totalCredited.value).isEqualByComparingTo("50.00")
         assertThat(balance.availableBalance.value).isEqualByComparingTo("50.00")
     }
 
     @Test
-    fun `should debitBalance decrease availableBalance only and return true when sufficient balance`() {
+    fun `should debitBalance decrease availableBalance and increase totalDebited when sufficient balance`() {
         val partnerId = newPartnerId()
-        adapter.save(PartnerBalance.with(id = partnerId, availableBalance = BigDecimal.ZERO))
+        adapter.save(PartnerBalance.with(id = partnerId))
         adapter.creditBalance(partnerId, Money.of(BigDecimal("100.00")))
 
         val result = adapter.debitBalance(partnerId, Money.of(BigDecimal("30.00")))
@@ -84,13 +85,14 @@ class DefaultPartnerBalanceRepositoryIT {
         assertThat(result).isTrue()
         val balance = adapter.findBalanceById(partnerId)!!
         assertThat(balance.availableBalance.value).isEqualByComparingTo("70.00")
-        assertThat(balance.totalBalance.value).isEqualByComparingTo("100.00")
+        assertThat(balance.totalCredited.value).isEqualByComparingTo("100.00")
+        assertThat(balance.totalDebited.value).isEqualByComparingTo("30.00")
     }
 
     @Test
     fun `should debitBalance return false and leave balance unchanged when insufficient balance`() {
         val partnerId = newPartnerId()
-        adapter.save(PartnerBalance.with(id = partnerId, availableBalance = BigDecimal.ZERO))
+        adapter.save(PartnerBalance.with(id = partnerId))
         adapter.creditBalance(partnerId, Money.of(BigDecimal("10.00")))
 
         val result = adapter.debitBalance(partnerId, Money.of(BigDecimal("50.00")))

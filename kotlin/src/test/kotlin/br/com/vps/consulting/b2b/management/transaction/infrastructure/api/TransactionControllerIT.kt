@@ -63,6 +63,8 @@ class TransactionControllerIT {
 
         mockMvc.perform(get("/api/v1/b2b/partners/$partnerId/balance"))
             .andExpect(jsonPath("$.availableBalance").value(100.00))
+            .andExpect(jsonPath("$.totalCredited").value(100.00))
+            .andExpect(jsonPath("$.totalDebited").value(0))
     }
 
     @Test
@@ -78,6 +80,8 @@ class TransactionControllerIT {
 
         mockMvc.perform(get("/api/v1/b2b/partners/$partnerId/balance"))
             .andExpect(jsonPath("$.availableBalance").value(70.00))
+            .andExpect(jsonPath("$.totalCredited").value(100.00))
+            .andExpect(jsonPath("$.totalDebited").value(30.00))
     }
 
     @Test
@@ -163,7 +167,7 @@ class TransactionControllerIT {
         val result = mockMvc.perform(
             post("/api/v1/b2b/partners")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"Acme Corp","document":"$document","availableBalance":0.00}""")
+                .content("""{"name":"Acme Corp","document":"$document"}""")
         ).andReturn()
         val id = UUID.fromString(jsonMapper.readTree(result.response.contentAsString).get("id").stringValue())
         createdPartnerIds.add(id)

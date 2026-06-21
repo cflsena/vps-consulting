@@ -7,14 +7,16 @@ import java.util.*
 
 data class FindPartnerBalanceOutput(
     val partnerId: UUID,
-    val totalBalance: BigDecimal,
+    val totalCredited: BigDecimal,
+    val totalDebited: BigDecimal,
     val availableBalance: BigDecimal,
     val updatedAt: Instant,
 ) {
     companion object {
         fun from(partnerBalance: PartnerBalance) = FindPartnerBalanceOutput(
             partnerId = partnerBalance.id.value,
-            totalBalance = partnerBalance.totalBalance.value,
+            totalCredited = partnerBalance.totalCredited.value,
+            totalDebited = partnerBalance.totalDebited.value,
             availableBalance = partnerBalance.availableBalance.value,
             updatedAt = partnerBalance.updatedAt
         )

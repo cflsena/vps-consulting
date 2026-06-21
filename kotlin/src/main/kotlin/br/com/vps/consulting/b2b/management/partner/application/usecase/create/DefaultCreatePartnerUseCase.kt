@@ -21,12 +21,7 @@ class DefaultCreatePartnerUseCase(
     override fun execute(input: CreatePartnerInput): UUID {
         log.info("Criando parceiro [nome=${input.name}, documento=${input.document}]")
         val partnerCreated = partnerRepository.save(Partner.with(name = input.name, document = input.document))
-        partnerBalanceRepository.save(
-            PartnerBalance.with(
-                id = partnerCreated.id,
-                availableBalance = input.availableBalance
-            )
-        )
+        partnerBalanceRepository.save(PartnerBalance.with(id = partnerCreated.id))
         log.info("Parceiro ${partnerCreated.id.value} criado com sucesso e saldo inicial zerado")
         return partnerCreated.id.value
     }

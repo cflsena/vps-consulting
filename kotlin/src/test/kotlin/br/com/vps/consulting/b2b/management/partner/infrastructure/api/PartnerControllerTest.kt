@@ -50,7 +50,7 @@ class PartnerControllerTest {
         mockMvc.perform(
             post("/api/v1/b2b/partners")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"Acme Corp","document":"12345678000100","availableBalance":100.00}""")
+                .content("""{"name":"Acme Corp","document":"12345678000100"}""")
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(id.toString()))
@@ -61,7 +61,7 @@ class PartnerControllerTest {
         mockMvc.perform(
             post("/api/v1/b2b/partners")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"","document":"12345678000100","availableBalance":100.00}""")
+                .content("""{"name":"","document":"12345678000100"}""")
         )
             .andExpect(status().isBadRequest)
     }
@@ -71,7 +71,8 @@ class PartnerControllerTest {
         val partnerId = UUID.randomUUID()
         val output = FindPartnerBalanceOutput(
             partnerId = partnerId,
-            totalBalance = BigDecimal("100.00"),
+            totalCredited = BigDecimal("100.00"),
+            totalDebited = BigDecimal("40.00"),
             availableBalance = BigDecimal("60.00"),
             updatedAt = Instant.now(),
         )

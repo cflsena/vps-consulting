@@ -30,7 +30,7 @@ interface PartnerApi {
 
     @Operation(
         summary = "Consultar saldo do parceiro",
-        description = "Retorna o saldo total (histórico de créditos) e o saldo disponível do parceiro",
+        description = "Retorna o total creditado e debitado historicamente, e o saldo disponível do parceiro",
     )
     @ApiResponse(responseCode = "200", description = "Saldo consultado com sucesso")
     @ApiResponse(responseCode = "404", description = "Parceiro não encontrado")

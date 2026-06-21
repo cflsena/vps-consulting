@@ -35,7 +35,8 @@ class DefaultFindPartnerBalanceUseCaseTest {
         val updatedAt = Instant.now()
         val balance = PartnerBalance.with(
             id = partnerId,
-            totalBalance = BigDecimal("100.00"),
+            totalCredited = BigDecimal("100.00"),
+            totalDebited = BigDecimal("40.00"),
             availableBalance = BigDecimal("60.00"),
             updatedAt = updatedAt,
         )
@@ -44,7 +45,8 @@ class DefaultFindPartnerBalanceUseCaseTest {
         val result = useCase.execute(FindPartnerBalanceInput(partnerId.value))
 
         assertThat(result.partnerId).isEqualTo(partnerId.value)
-        assertThat(result.totalBalance).isEqualByComparingTo("100.00")
+        assertThat(result.totalCredited).isEqualByComparingTo("100.00")
+        assertThat(result.totalDebited).isEqualByComparingTo("40.00")
         assertThat(result.availableBalance).isEqualByComparingTo("60.00")
         assertThat(result.updatedAt).isEqualTo(updatedAt)
     }

@@ -16,7 +16,7 @@ interface PartnerBalanceJpaRepository : JpaRepository<PartnerBalanceEntity, UUID
     @Query(
         """
         UPDATE partner_balance
-        SET total_balance = total_balance + :amount,
+        SET total_credited = total_credited + :amount,
             available_balance = available_balance + :amount,
             updated_at = now()
         WHERE partner_id = :partnerId
@@ -31,6 +31,7 @@ interface PartnerBalanceJpaRepository : JpaRepository<PartnerBalanceEntity, UUID
         """
         UPDATE partner_balance
         SET available_balance = available_balance - :amount,
+            total_debited = total_debited + :amount,
             updated_at = now()
         WHERE partner_id = :partnerId AND available_balance >= :amount
         """,

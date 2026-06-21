@@ -7,21 +7,24 @@ import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.P
 
 fun PartnerBalance.toEntity() = PartnerBalanceEntity(
     partnerId = this.id.value,
-    totalBalance = this.totalBalance.value,
+    totalCredited = this.totalCredited.value,
+    totalDebited = this.totalDebited.value,
     availableBalance = this.availableBalance.value,
     updatedAt = this.updatedAt
 )
 
 fun PartnerBalance.toOutput() = FindPartnerBalanceOutput(
     partnerId = this.id.value,
-    totalBalance = this.totalBalance.value,
+    totalCredited = this.totalCredited.value,
+    totalDebited = this.totalDebited.value,
     availableBalance = this.availableBalance.value,
     updatedAt = this.updatedAt
 )
 
 fun PartnerBalanceEntity.toDomain() = PartnerBalance.with(
     id = PartnerId.from(this.partnerId),
-    totalBalance = this.totalBalance,
+    totalCredited = this.totalCredited,
+    totalDebited = this.totalDebited,
     availableBalance = this.availableBalance,
     updatedAt = this.updatedAt
 )

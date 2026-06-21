@@ -88,7 +88,8 @@ class DefaultPartnerBalanceRepositoryConcurrencyIT {
         assertThat(successCount.get()).isEqualTo(50)
         assertThat(balance.availableBalance).isEqualByComparingTo(BigDecimal.ZERO)
         assertThat(balance.availableBalance).isGreaterThanOrEqualTo(BigDecimal.ZERO)
-        assertThat(balance.totalBalance).isEqualByComparingTo(initialBalance)
+        assertThat(balance.totalCredited).isEqualByComparingTo(initialBalance)
+        assertThat(balance.totalDebited).isEqualByComparingTo(amountPerRequest.value.multiply(BigDecimal(successCount.get())))
     }
 
     @Test
@@ -125,7 +126,8 @@ class DefaultPartnerBalanceRepositoryConcurrencyIT {
         val expectedTotal = amountPerRequest.value.multiply(BigDecimal(totalAttempts))
 
         assertThat(successCount.get()).isEqualTo(totalAttempts)
-        assertThat(balance.totalBalance).isEqualByComparingTo(expectedTotal)
+        assertThat(balance.totalCredited).isEqualByComparingTo(expectedTotal)
+        assertThat(balance.totalDebited).isEqualByComparingTo(BigDecimal.ZERO)
         assertThat(balance.availableBalance).isEqualByComparingTo(expectedTotal)
     }
 
@@ -142,7 +144,8 @@ class DefaultPartnerBalanceRepositoryConcurrencyIT {
         partnerBalanceJpaRepository.save(
             PartnerBalanceEntity(
                 partnerId = id,
-                totalBalance = initialBalance,
+                totalCredited = initialBalance,
+                totalDebited = BigDecimal.ZERO,
                 availableBalance = initialBalance,
                 updatedAt = Instant.now(),
             )
