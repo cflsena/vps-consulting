@@ -7,7 +7,7 @@ interface PartnerRepository {
     fun save(partner: Partner): Partner
     fun findById(id: PartnerId): Partner?
     fun findBalanceById(id: PartnerId): PartnerBalance?
-    fun findAll(pageSize: Int, pageNumber: Int): PageCustom<Partner>
+    fun findAll(document: String?, pageSize: Int, pageNumber: Int): PageCustom<Partner>
     fun creditBalance(partnerId: PartnerId, amount: Money): Boolean
     fun debitBalance(partnerId: PartnerId, amount: Money): Boolean
 }
