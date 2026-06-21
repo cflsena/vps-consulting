@@ -13,7 +13,7 @@ import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 
 @Named
-open class DefaultCreateTransactionUseCase(
+class DefaultCreateTransactionUseCase(
     private val transactionRepository: TransactionRepository,
     private val eventPublisher: EventPublisher,
     private val validator: CreateTransactionValidator,

@@ -12,7 +12,7 @@ import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 
 @Named
-open class DefaultReconcileTransactionsUseCase(
+class DefaultReconcileTransactionsUseCase(
     private val transactionRepository: TransactionRepository,
     private val eventPublisher: EventPublisher,
     handlers: List<TransactionHandler>

@@ -8,7 +8,7 @@ import org.slf4j.LoggerFactory
 import java.util.UUID
 
 @Named
-open class DefaultCreatePartnerUseCase(
+class DefaultCreatePartnerUseCase(
     private val partnerRepository: PartnerRepository,
 ) : CreatePartnerUseCase {
 

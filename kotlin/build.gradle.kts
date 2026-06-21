@@ -66,6 +66,7 @@ allOpen {
 	annotation("jakarta.persistence.Entity")
 	annotation("jakarta.persistence.MappedSuperclass")
 	annotation("jakarta.persistence.Embeddable")
+	annotation("jakarta.inject.Named")
 }
 
 tasks.withType<Test> {
