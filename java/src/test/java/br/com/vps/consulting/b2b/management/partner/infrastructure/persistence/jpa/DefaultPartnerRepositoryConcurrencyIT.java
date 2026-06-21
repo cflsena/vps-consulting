@@ -2,7 +2,7 @@ package br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.
 
 import br.com.vps.consulting.b2b.management.TestcontainersConfiguration;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
-import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.DefaultPartnerRepository;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.DefaultPartnerCreditRepository;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerCreditEntity;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerEntity;
 import org.junit.jupiter.api.AfterEach;
@@ -30,12 +30,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({TestcontainersConfiguration.class, DefaultPartnerRepository.class})
+@Import({TestcontainersConfiguration.class, DefaultPartnerCreditRepository.class})
 @ImportAutoConfiguration(FlywayAutoConfiguration.class)
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
 class DefaultPartnerRepositoryConcurrencyIT {
 
-    @Autowired private DefaultPartnerRepository adapter;
+    @Autowired private DefaultPartnerCreditRepository adapter;
     @Autowired private PartnerJpaRepository partnerJpaRepository;
     @Autowired private PartnerCreditJpaRepository partnerCreditJpaRepository;
 

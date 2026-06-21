@@ -2,6 +2,7 @@ package br.com.vps.consulting.b2b.management.partner.application.usecase.create;
 
 import br.com.vps.consulting.b2b.management.partner.domain.Partner;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
+import br.com.vps.consulting.b2b.management.partner.domain.PartnerCreditRepository;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.when;
 class DefaultCreatePartnerUseCaseTest {
 
     @Mock private PartnerRepository partnerRepository;
+    @Mock private PartnerCreditRepository partnerCreditRepository;
     @InjectMocks private DefaultCreatePartnerUseCase useCase;
 
     @Test
@@ -33,6 +35,7 @@ class DefaultCreatePartnerUseCaseTest {
 
         assertThat(result).isEqualTo(partner.getId().value());
         verify(partnerRepository).save(any(Partner.class));
+        verify(partnerCreditRepository).save(any());
     }
 
     private static Partner newPartner() {
@@ -40,7 +43,6 @@ class DefaultCreatePartnerUseCaseTest {
                 .id(PartnerId.generate())
                 .name("Acme Corp")
                 .document("12345678000100")
-                .creditLimit(new BigDecimal("10000.00"))
                 .build();
     }
 }

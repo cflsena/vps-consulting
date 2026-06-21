@@ -75,7 +75,6 @@ class PartnerControllerTest {
                 .id(PartnerId.from(id))
                 .name("Acme Corp")
                 .document("12345678000100")
-                .creditLimit(new BigDecimal("5000.00"))
                 .createdAt(Instant.now())
                 .build();
         final var page = PartnerListOutput.from(PageCustom.<Partner>builder()
@@ -185,6 +184,7 @@ class PartnerControllerTest {
     void shouldReturnPartnerCreditData() throws Exception {
         final var id = UUID.randomUUID();
         final var credit = new PartnerCredit(
+                id,
                 new BigDecimal("10000.00"),
                 new BigDecimal("7500.00"),
                 new BigDecimal("2500.00"),

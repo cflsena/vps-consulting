@@ -24,11 +24,10 @@ public class Order extends Entity<OrderId> {
 
     @Builder(builderMethodName = "createPending", builderClassName = "CreatePendingBuilder")
     public Order(final PartnerId partnerId, final List<OrderItem> items) {
-
         this.id = OrderId.generate();
         this.partnerId = partnerId;
-        this.items = List.copyOf(items);
-        this.totalAmount = calculateTotal(items);
+        this.items = items == null ? List.of() : List.copyOf(items);
+        this.totalAmount = items == null ? Money.zero() : calculateTotal(items);
         this.status = OrderStatus.PENDING;
         this.createdAt = Instant.now();
         this.updatedAt = this.createdAt;

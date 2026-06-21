@@ -1,6 +1,7 @@
 package br.com.vps.consulting.b2b.management.order.infrastructure.persistence;
 
 import br.com.vps.consulting.b2b.management.order.domain.*;
+import br.com.vps.consulting.b2b.management.order.domain.projection.OrderProjection;
 import br.com.vps.consulting.b2b.management.order.infrastructure.mapper.OrderItemMapper;
 import br.com.vps.consulting.b2b.management.order.infrastructure.mapper.OrderMapper;
 import br.com.vps.consulting.b2b.management.order.infrastructure.persistence.jpa.OrderItemJpaRepository;
@@ -15,7 +16,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -38,19 +38,17 @@ public class DefaultOrderRepository implements OrderRepository {
 
     @Override
     public Optional<Order> findById(final OrderId id) {
-        return orderJpaRepository.findById(id.value())
-                .map(entity -> {
-                    final List<OrderItem> items = orderItemJpaRepository
-                            .findAllByOrderId(entity.getId(), Pageable.unpaged())
-                            .map(OrderItemMapper::toDomain)
-                            .toList();
-                    return OrderMapper.toDomain(entity, items);
-                });
+        return orderJpaRepository.findById(id.value()).map(OrderMapper::toDomain);
     }
 
     @Override
-    public PageCustom<Order> findByFilter(final Instant from, final Instant to, final OrderStatus status,
-                                          final UUID partnerId, final long pageSize, final long pageNumber) {
+    public Optional<OrderProjection> findOrderDetailsById(final OrderId id) {
+        return orderJpaRepository.findProjectedById(id.value());
+    }
+
+    @Override
+    public PageCustom<OrderProjection> findByFilter(final Instant from, final Instant to, final OrderStatus status,
+                                                    final UUID partnerId, final long pageSize, final long pageNumber) {
         final Specification<OrderEntity> spec = Specification
                 .where(OrderSpecification.hasDateFrom(from))
                 .and(OrderSpecification.hasDateTo(to))
@@ -60,7 +58,7 @@ public class DefaultOrderRepository implements OrderRepository {
         final Pageable pageable = PageRequest.of((int) pageNumber, (int) pageSize,
                 Sort.by(Sort.Direction.DESC, "createdAt"));
 
-        return OrderMapper.toPage(orderJpaRepository.findAll(spec, pageable));
+        return OrderMapper.toPage(orderJpaRepository.findByFilter(spec, pageable));
     }
 
 }

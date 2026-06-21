@@ -4,7 +4,7 @@ import br.com.vps.consulting.b2b.management.TestcontainersConfiguration;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerCreditEntity;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerEntity;
-import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.DefaultPartnerRepository;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.DefaultPartnerCreditRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,11 +24,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import({TestcontainersConfiguration.class, DefaultPartnerRepository.class})
+@Import({TestcontainersConfiguration.class, DefaultPartnerCreditRepository.class})
 @ImportAutoConfiguration(FlywayAutoConfiguration.class)
 class DefaultPartnerRepositoryIT {
 
-    @Autowired private DefaultPartnerRepository adapter;
+    @Autowired private DefaultPartnerCreditRepository adapter;
     @Autowired private PartnerJpaRepository partnerJpaRepository;
     @Autowired private PartnerCreditJpaRepository partnerCreditJpaRepository;
 

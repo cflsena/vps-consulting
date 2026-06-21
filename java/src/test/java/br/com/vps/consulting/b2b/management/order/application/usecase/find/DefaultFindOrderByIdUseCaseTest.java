@@ -1,13 +1,10 @@
 package br.com.vps.consulting.b2b.management.order.application.usecase.find;
 
-import br.com.vps.consulting.b2b.management.order.domain.Order;
 import br.com.vps.consulting.b2b.management.order.domain.OrderId;
-import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
 import br.com.vps.consulting.b2b.management.order.domain.OrderRepository;
 import br.com.vps.consulting.b2b.management.order.domain.OrderStatus;
 import br.com.vps.consulting.b2b.management.order.domain.exception.OrderNotFoundException;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
-import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
+import br.com.vps.consulting.b2b.management.order.domain.projection.OrderProjection;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +14,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.Instant;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -36,8 +32,8 @@ class DefaultFindOrderByIdUseCaseTest {
     void shouldReturnMappedOrderOutput() {
         final var orderId = UUID.randomUUID();
         final var partnerId = UUID.randomUUID();
-        final var order = orderOf(orderId, partnerId);
-        when(orderRepository.findById(OrderId.from(orderId))).thenReturn(Optional.of(order));
+        final var projection = projectionOf(orderId, partnerId);
+        when(orderRepository.findOrderDetailsById(OrderId.from(orderId))).thenReturn(Optional.of(projection));
 
         final var result = useCase.execute(orderId);
 
@@ -51,24 +47,44 @@ class DefaultFindOrderByIdUseCaseTest {
     @DisplayName("Given a non-existing order, when execute is called, should throw OrderNotFoundException")
     void shouldThrowWhenOrderNotFound() {
         final var orderId = UUID.randomUUID();
-        when(orderRepository.findById(OrderId.from(orderId))).thenReturn(Optional.empty());
+        when(orderRepository.findOrderDetailsById(OrderId.from(orderId))).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> useCase.execute(orderId))
                 .isInstanceOf(OrderNotFoundException.class)
                 .hasMessageContaining("Pedido não encontrado");
     }
 
-    private static Order orderOf(final UUID orderId, final UUID partnerId) {
-        return Order.builder()
-                .id(OrderId.from(orderId))
-                .partnerId(PartnerId.from(partnerId))
-                .items(List.of(OrderItem.builder()
-                        .productId("PROD-001").quantity(2)
-                        .unitPrice(Money.of(new BigDecimal("50.00"))).build()))
-                .totalAmount(Money.of(new BigDecimal("100.00")))
-                .status(OrderStatus.PENDING)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
-                .build();
+    private static OrderProjection projectionOf(final UUID orderId, final UUID partnerId) {
+        return new OrderProjection() {
+            @Override
+            public UUID getId() {
+                return orderId;
+            }
+
+            @Override
+            public UUID getPartnerId() {
+                return partnerId;
+            }
+
+            @Override
+            public BigDecimal getTotalAmount() {
+                return new BigDecimal("100.00");
+            }
+
+            @Override
+            public OrderStatus getStatus() {
+                return OrderStatus.PENDING;
+            }
+
+            @Override
+            public Instant getCreatedAt() {
+                return Instant.now();
+            }
+
+            @Override
+            public Instant getUpdatedAt() {
+                return Instant.now();
+            }
+        };
     }
 }

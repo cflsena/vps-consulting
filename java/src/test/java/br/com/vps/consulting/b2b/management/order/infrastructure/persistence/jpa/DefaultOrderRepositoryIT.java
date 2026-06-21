@@ -111,7 +111,7 @@ class DefaultOrderRepositoryIT {
 
         final var page = adapter.findByFilter(null, null, OrderStatus.APPROVED, null, 20, 0);
 
-        assertThat(page.items()).extracting(o -> o.getId().value()).containsExactly(approved.getId().value());
+        assertThat(page.items()).extracting(o -> o.getId()).containsExactly(approved.getId().value());
     }
 
     @Test
@@ -128,7 +128,7 @@ class DefaultOrderRepositoryIT {
 
         final var page = adapter.findByFilter(null, null, null, partnerA, 20, 0);
 
-        assertThat(page.items()).extracting(o -> o.getId().value()).containsExactly(orderA.getId().value());
+        assertThat(page.items()).extracting(o -> o.getId()).containsExactly(orderA.getId().value());
     }
 
     @Test
@@ -143,8 +143,8 @@ class DefaultOrderRepositoryIT {
         final var pageIncluding = adapter.findByFilter(anHourAgo, null, null, null, 20, 0);
         final var pageExcluding = adapter.findByFilter(null, anHourAgo, null, null, 20, 0);
 
-        assertThat(pageIncluding.items()).extracting(o -> o.getId().value()).contains(order.getId().value());
-        assertThat(pageExcluding.items()).extracting(o -> o.getId().value()).doesNotContain(order.getId().value());
+        assertThat(pageIncluding.items()).extracting(o -> o.getId()).contains(order.getId().value());
+        assertThat(pageExcluding.items()).extracting(o -> o.getId()).doesNotContain(order.getId().value());
     }
 
     @Test
@@ -163,7 +163,7 @@ class DefaultOrderRepositoryIT {
         final var page = adapter.findByFilter(null, null, OrderStatus.PENDING, partnerId, 20, 0);
 
         assertThat(page.pageNumber()).isZero();
-        assertThat(page.items()).extracting(o -> o.getId().value()).containsExactly(match.getId().value());
+        assertThat(page.items()).extracting(o -> o.getId()).containsExactly(match.getId().value());
     }
 
     private UUID createPartner() {

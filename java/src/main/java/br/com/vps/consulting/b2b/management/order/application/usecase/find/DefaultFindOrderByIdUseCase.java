@@ -19,7 +19,7 @@ public class DefaultFindOrderByIdUseCase implements FindOrderByIdUseCase {
     @Override
     public OrderOutput execute(final UUID orderId) {
         log.info("Finding order by id [orderId={}]", orderId);
-        final var output = orderRepository.findById(OrderId.from(orderId))
+        final var output = orderRepository.findOrderDetailsById(OrderId.from(orderId))
                 .map(OrderOutput::from)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
         log.info("Order found [orderId={}]", orderId);

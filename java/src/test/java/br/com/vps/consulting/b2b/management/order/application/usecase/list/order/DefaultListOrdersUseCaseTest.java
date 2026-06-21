@@ -1,13 +1,9 @@
 package br.com.vps.consulting.b2b.management.order.application.usecase.list.order;
 
-import br.com.vps.consulting.b2b.management.order.domain.Order;
-import br.com.vps.consulting.b2b.management.order.domain.OrderId;
-import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
 import br.com.vps.consulting.b2b.management.order.domain.OrderRepository;
 import br.com.vps.consulting.b2b.management.order.domain.OrderStatus;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
+import br.com.vps.consulting.b2b.management.order.domain.projection.OrderProjection;
 import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
-import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,9 +36,9 @@ class DefaultListOrdersUseCaseTest {
     void shouldReturnMappedPage() {
         final var from = Instant.now().minusSeconds(3600);
         final var to = Instant.now();
-        final var page = PageCustom.<Order>builder()
+        final var page = PageCustom.<OrderProjection>builder()
                 .pageNumber(0).pageSize(10).numberOfElements(1)
-                .totalPages(1).totalElements(1L).items(List.of(pendingOrder()))
+                .totalPages(1).totalElements(1L).items(List.of(pendingProjection()))
                 .build();
         when(orderRepository.findByFilter(from, to, null, null, 10, 0)).thenReturn(page);
 
@@ -91,22 +87,43 @@ class DefaultListOrdersUseCaseTest {
         verifyNoInteractions(orderRepository);
     }
 
-    private static Order pendingOrder() {
-        return Order.builder()
-                .id(OrderId.generate())
-                .partnerId(PartnerId.generate())
-                .items(List.of(OrderItem.builder()
-                        .productId("PROD-001").quantity(1)
-                        .unitPrice(Money.of(new BigDecimal("100.00"))).build()))
-                .totalAmount(Money.of(new BigDecimal("100.00")))
-                .status(OrderStatus.PENDING)
-                .createdAt(Instant.now())
-                .updatedAt(Instant.now())
-                .build();
+    private static OrderProjection pendingProjection() {
+        final var now = Instant.now();
+        return new OrderProjection() {
+            @Override
+            public java.util.UUID getId() {
+                return java.util.UUID.randomUUID();
+            }
+
+            @Override
+            public java.util.UUID getPartnerId() {
+                return java.util.UUID.randomUUID();
+            }
+
+            @Override
+            public BigDecimal getTotalAmount() {
+                return new BigDecimal("100.00");
+            }
+
+            @Override
+            public OrderStatus getStatus() {
+                return OrderStatus.PENDING;
+            }
+
+            @Override
+            public Instant getCreatedAt() {
+                return now;
+            }
+
+            @Override
+            public Instant getUpdatedAt() {
+                return now;
+            }
+        };
     }
 
-    private static PageCustom<Order> emptyPage() {
-        return PageCustom.<Order>builder()
+    private static PageCustom<OrderProjection> emptyPage() {
+        return PageCustom.<OrderProjection>builder()
                 .pageNumber(0).pageSize(5).numberOfElements(0)
                 .totalPages(0).totalElements(0L).items(List.of())
                 .build();

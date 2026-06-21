@@ -1,6 +1,6 @@
 package br.com.vps.consulting.b2b.management.order.application.usecase.find;
 
-import br.com.vps.consulting.b2b.management.order.domain.Order;
+import br.com.vps.consulting.b2b.management.order.domain.projection.OrderProjection;
 import lombok.AccessLevel;
 import lombok.Builder;
 
@@ -19,11 +19,11 @@ public record OrderOutput(
         OffsetDateTime createdAt,
         OffsetDateTime updatedAt
 ) {
-    public static OrderOutput from(final Order order) {
+    public static OrderOutput from(final OrderProjection order) {
         return OrderOutput.builder()
-                .id(order.getId().value())
-                .partnerId(order.getPartnerId().value())
-                .totalAmount(order.getTotalAmount().value())
+                .id(order.getId())
+                .partnerId(order.getPartnerId())
+                .totalAmount(order.getTotalAmount())
                 .status(order.getStatus().name())
                 .createdAt(order.getCreatedAt().atOffset(BRASILIA_TIME_ZONE))
                 .updatedAt(order.getUpdatedAt().atOffset(BRASILIA_TIME_ZONE))

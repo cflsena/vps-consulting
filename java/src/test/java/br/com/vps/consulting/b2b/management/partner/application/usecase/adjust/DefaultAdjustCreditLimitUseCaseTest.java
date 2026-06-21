@@ -1,8 +1,8 @@
 package br.com.vps.consulting.b2b.management.partner.application.usecase.adjust;
 
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerCredit;
+import br.com.vps.consulting.b2b.management.partner.domain.PartnerCreditRepository;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerRepository;
 import br.com.vps.consulting.b2b.management.partner.domain.exception.CreditLimitBelowReservationException;
 import br.com.vps.consulting.b2b.management.partner.domain.exception.PartnerNotFoundException;
 import org.junit.jupiter.api.DisplayName;
@@ -26,18 +26,18 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class DefaultAdjustCreditLimitUseCaseTest {
 
-    @Mock private PartnerRepository partnerRepository;
+    @Mock private PartnerCreditRepository partnerCreditRepository;
     @InjectMocks private DefaultAdjustCreditLimitUseCase useCase;
 
     @Test
     @DisplayName("Given a valid new limit, when execute is called, should adjust the credit limit")
     void shouldAdjustCreditLimit() {
         final var partnerId = UUID.randomUUID();
-        when(partnerRepository.findCreditById(PartnerId.from(partnerId))).thenReturn(Optional.of(creditWith("10000", "10000", "0")));
+        when(partnerCreditRepository.findById(PartnerId.from(partnerId))).thenReturn(Optional.of(creditWith(partnerId, "10000", "10000", "0")));
 
         useCase.execute(new AdjustCreditLimitInput(partnerId, new BigDecimal("25000.00")));
 
-        verify(partnerRepository).adjustCreditLimit(PartnerId.from(partnerId), new BigDecimal("25000.00"));
+        verify(partnerCreditRepository).adjustCreditLimit(PartnerId.from(partnerId), new BigDecimal("25000.00"));
     }
 
     // creditLimit=1000, availableBalance=600, reservedBalance=200 → debited=400 → minimumLimit=600
@@ -46,11 +46,11 @@ class DefaultAdjustCreditLimitUseCaseTest {
     void shouldAllowAdjustmentAboveMinimumLimit() {
         final var partnerId = UUID.randomUUID();
 
-        when(partnerRepository.findCreditById(PartnerId.from(partnerId))).thenReturn(Optional.of(creditWith("1000", "600", "200")));
+        when(partnerCreditRepository.findById(PartnerId.from(partnerId))).thenReturn(Optional.of(creditWith(partnerId, "1000", "600", "200")));
 
         useCase.execute(new AdjustCreditLimitInput(partnerId, new BigDecimal("600.00")));
 
-        verify(partnerRepository).adjustCreditLimit(PartnerId.from(partnerId), new BigDecimal("600.00"));
+        verify(partnerCreditRepository).adjustCreditLimit(PartnerId.from(partnerId), new BigDecimal("600.00"));
     }
 
     // creditLimit=1000, availableBalance=600, reservedBalance=200 → debited=400 → minimumLimit=600
@@ -59,19 +59,19 @@ class DefaultAdjustCreditLimitUseCaseTest {
     void shouldThrowWhenNewLimitBelowMinimum() {
         final var partnerId = UUID.randomUUID();
 
-        when(partnerRepository.findCreditById(PartnerId.from(partnerId))).thenReturn(Optional.of(creditWith("1000", "600", "200")));
+        when(partnerCreditRepository.findById(PartnerId.from(partnerId))).thenReturn(Optional.of(creditWith(partnerId, "1000", "600", "200")));
 
         assertThatThrownBy(() -> useCase.execute(new AdjustCreditLimitInput(partnerId, new BigDecimal("599.99"))))
                 .isInstanceOf(CreditLimitBelowReservationException.class);
 
-        verify(partnerRepository, never()).adjustCreditLimit(any(), any());
+        verify(partnerCreditRepository, never()).adjustCreditLimit(any(), any());
     }
 
     @Test
     @DisplayName("Given a non-existing partner, when execute is called, should throw PartnerNotFoundException")
     void shouldThrowWhenPartnerNotFound() {
         final var partnerId = UUID.randomUUID();
-        when(partnerRepository.findCreditById(any())).thenReturn(Optional.empty());
+        when(partnerCreditRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> useCase.execute(new AdjustCreditLimitInput(partnerId, BigDecimal.TEN)))
                 .isInstanceOf(PartnerNotFoundException.class)
@@ -81,16 +81,16 @@ class DefaultAdjustCreditLimitUseCaseTest {
     @Test
     @DisplayName("Given a non-existing partner, when execute is called, should not adjust the credit limit")
     void shouldNotAdjustWhenPartnerNotFound() {
-        when(partnerRepository.findCreditById(any())).thenReturn(Optional.empty());
+        when(partnerCreditRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> useCase.execute(new AdjustCreditLimitInput(UUID.randomUUID(), BigDecimal.TEN)))
                 .isInstanceOf(PartnerNotFoundException.class);
 
-        verify(partnerRepository, never()).adjustCreditLimit(any(), any());
+        verify(partnerCreditRepository, never()).adjustCreditLimit(any(), any());
     }
 
-    private static PartnerCredit creditWith(String limit, String available, String reserved) {
-        return new PartnerCredit(new BigDecimal(limit), new BigDecimal(available), new BigDecimal(reserved), Instant.now());
+    private static PartnerCredit creditWith(UUID id, String limit, String available, String reserved) {
+        return new PartnerCredit(id, new BigDecimal(limit), new BigDecimal(available), new BigDecimal(reserved), Instant.now());
     }
 
 }

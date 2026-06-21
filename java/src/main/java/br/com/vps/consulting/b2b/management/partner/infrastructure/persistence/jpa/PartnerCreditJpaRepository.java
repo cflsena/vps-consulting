@@ -17,7 +17,7 @@ public interface PartnerCreditJpaRepository extends JpaRepository<PartnerCreditE
     @Query(value = """
             UPDATE partner_credit
             SET reserved_balance = reserved_balance + :amount, updated_at = now()
-            WHERE partner_id = :partnerId AND available_balance - reserved_balance >= :amount
+            WHERE id = :partnerId AND available_balance - reserved_balance >= :amount
             """, nativeQuery = true)
     int reserveCredit(@Param("partnerId") UUID partnerId, @Param("amount") BigDecimal amount);
 
@@ -28,7 +28,7 @@ public interface PartnerCreditJpaRepository extends JpaRepository<PartnerCreditE
             SET available_balance = available_balance - :amount,
                 reserved_balance  = reserved_balance  - :amount,
                 updated_at = now()
-            WHERE partner_id = :partnerId
+            WHERE id = :partnerId
             """, nativeQuery = true)
     void debitReservation(@Param("partnerId") UUID partnerId, @Param("amount") BigDecimal amount);
 
@@ -37,7 +37,7 @@ public interface PartnerCreditJpaRepository extends JpaRepository<PartnerCreditE
     @Query(value = """
             UPDATE partner_credit
             SET reserved_balance = reserved_balance - :amount, updated_at = now()
-            WHERE partner_id = :partnerId
+            WHERE id = :partnerId
             """, nativeQuery = true)
     void releaseReservation(@Param("partnerId") UUID partnerId, @Param("amount") BigDecimal amount);
 
@@ -46,7 +46,7 @@ public interface PartnerCreditJpaRepository extends JpaRepository<PartnerCreditE
     @Query(value = """
             UPDATE partner_credit
             SET available_balance = available_balance + :amount, updated_at = now()
-            WHERE partner_id = :partnerId
+            WHERE id = :partnerId
             """, nativeQuery = true)
     void refundCredit(@Param("partnerId") UUID partnerId, @Param("amount") BigDecimal amount);
 
@@ -57,7 +57,7 @@ public interface PartnerCreditJpaRepository extends JpaRepository<PartnerCreditE
             SET credit_limit      = :newLimit,
                 available_balance = available_balance + (:newLimit - credit_limit),
                 updated_at        = now()
-            WHERE partner_id = :partnerId
+            WHERE id = :partnerId
             """, nativeQuery = true)
     int adjustCreditLimit(@Param("partnerId") UUID partnerId, @Param("newLimit") BigDecimal newLimit);
 

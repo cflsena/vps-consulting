@@ -71,7 +71,6 @@ class DefaultListPartnersUseCaseTest {
                 .id(PartnerId.generate())
                 .name("Acme Corp")
                 .document("12345678000100")
-                .creditLimit(new BigDecimal("5000.00"))
                 .createdAt(Instant.now())
                 .build();
     }

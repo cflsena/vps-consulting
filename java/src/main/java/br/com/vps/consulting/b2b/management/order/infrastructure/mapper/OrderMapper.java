@@ -3,6 +3,7 @@ package br.com.vps.consulting.b2b.management.order.infrastructure.mapper;
 import br.com.vps.consulting.b2b.management.order.domain.Order;
 import br.com.vps.consulting.b2b.management.order.domain.OrderId;
 import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
+import br.com.vps.consulting.b2b.management.order.domain.projection.OrderProjection;
 import br.com.vps.consulting.b2b.management.order.infrastructure.persistence.OrderEntity;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
@@ -26,11 +27,10 @@ public final class OrderMapper {
                 .build();
     }
 
-    public static Order toDomain(final OrderEntity entity, final List<OrderItem> items) {
+    public static Order toDomain(final OrderEntity entity) {
         return Order.builder()
                 .id(OrderId.from(entity.getId()))
                 .partnerId(PartnerId.from(entity.getPartnerId()))
-                .items(items)
                 .totalAmount(Money.of(entity.getTotalAmount()))
                 .status(entity.getStatus())
                 .createdAt(entity.getCreatedAt())
@@ -38,13 +38,14 @@ public final class OrderMapper {
                 .build();
     }
 
-    public static PageCustom<Order> toPage(final Page<OrderEntity> page) {
-        return PageCustom.<Order>builder()
+    public static PageCustom<OrderProjection> toPage(final Page<OrderProjection> page) {
+        return PageCustom.<OrderProjection>builder()
                 .pageNumber(page.getNumber())
                 .pageSize(page.getSize())
                 .numberOfElements(page.getNumberOfElements())
                 .totalPages(page.getTotalPages())
                 .totalElements(page.getTotalElements())
+                .items(page.getContent())
                 .build();
     }
 
