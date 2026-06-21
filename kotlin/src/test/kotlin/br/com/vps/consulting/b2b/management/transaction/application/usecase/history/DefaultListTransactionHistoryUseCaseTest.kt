@@ -65,7 +65,7 @@ class DefaultListTransactionHistoryUseCaseTest {
         val result = useCase.execute(input(partnerId))
 
         assertThat(result.items).hasSize(1)
-        assertThat(result.items[0].transactionId).isEqualTo(transaction.id.value)
+        assertThat(result.items[0].id).isEqualTo(transaction.id.value)
     }
 
     @Test

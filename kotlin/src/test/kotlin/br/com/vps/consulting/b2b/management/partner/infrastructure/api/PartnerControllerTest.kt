@@ -50,7 +50,7 @@ class PartnerControllerTest {
         mockMvc.perform(
             post("/api/v1/b2b/partners")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"Acme Corp","document":"12345678000100"}""")
+                .content("""{"name":"Acme Corp","document":"12345678000100","availableBalance":100.00}""")
         )
             .andExpect(status().isCreated)
             .andExpect(jsonPath("$.id").value(id.toString()))
@@ -61,7 +61,7 @@ class PartnerControllerTest {
         mockMvc.perform(
             post("/api/v1/b2b/partners")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"","document":"12345678000100"}""")
+                .content("""{"name":"","document":"12345678000100","availableBalance":100.00}""")
         )
             .andExpect(status().isBadRequest)
     }

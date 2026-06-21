@@ -1,10 +1,10 @@
 package br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.jpa
 
 import br.com.vps.consulting.b2b.management.TestcontainersConfiguration
+import br.com.vps.consulting.b2b.management.partner.domain.PartnerId
+import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.DefaultPartnerBalanceRepository
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerBalanceEntity
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerEntity
-import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.DefaultPartnerRepository
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerId
 import br.com.vps.consulting.b2b.management.shared.core.vo.Money
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
@@ -27,13 +27,13 @@ import java.util.concurrent.atomic.AtomicInteger
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(TestcontainersConfiguration::class, DefaultPartnerRepository::class)
+@Import(TestcontainersConfiguration::class, DefaultPartnerBalanceRepository::class)
 @ImportAutoConfiguration(FlywayAutoConfiguration::class)
 @Transactional(propagation = Propagation.NOT_SUPPORTED)
-class DefaultPartnerRepositoryConcurrencyIT {
+class DefaultPartnerBalanceRepositoryConcurrencyIT {
 
     @Autowired
-    lateinit var adapter: DefaultPartnerRepository
+    lateinit var adapter: DefaultPartnerBalanceRepository
 
     @Autowired
     lateinit var partnerJpaRepository: PartnerJpaRepository

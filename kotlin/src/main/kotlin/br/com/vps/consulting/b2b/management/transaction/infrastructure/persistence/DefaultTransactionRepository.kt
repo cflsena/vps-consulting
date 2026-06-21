@@ -27,6 +27,10 @@ class DefaultTransactionRepository(
         return transaction
     }
 
+    override fun saveAll(processedTransactions: List<Transaction>) {
+        transactionJpaRepository.saveAll(processedTransactions.map(Transaction::toEntity))
+    }
+
     override fun findById(id: TransactionId): Transaction? =
         transactionJpaRepository.findById(id.value).map { it.toDomain() }.orElse(null)
 

@@ -6,6 +6,7 @@ import java.util.*
 
 interface TransactionRepository {
     fun save(transaction: Transaction): Transaction
+    fun saveAll(processedTransactions: List<Transaction>)
     fun findById(id: TransactionId): Transaction?
     fun findByIdempotencyKey(key: String): Transaction?
     fun findPending(limit: Int): List<Transaction>

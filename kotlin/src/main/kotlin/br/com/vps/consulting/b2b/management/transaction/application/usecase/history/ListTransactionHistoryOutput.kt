@@ -9,7 +9,7 @@ import java.time.Instant
 import java.util.UUID
 
 data class ListTransactionHistoryOutput(
-    val transactionId: UUID,
+    val id: UUID,
     val type: TransactionType,
     val amount: BigDecimal,
     val description: String,
@@ -26,7 +26,7 @@ data class ListTransactionHistoryOutput(
         )
 
         fun from(transaction: Transaction): ListTransactionHistoryOutput = ListTransactionHistoryOutput(
-            transactionId = transaction.id.value,
+            id = transaction.id.value,
             type = transaction.type,
             amount = transaction.amount.value,
             description = transaction.description,

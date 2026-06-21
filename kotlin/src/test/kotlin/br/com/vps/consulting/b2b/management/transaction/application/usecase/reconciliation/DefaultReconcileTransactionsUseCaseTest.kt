@@ -66,7 +66,7 @@ class DefaultReconcileTransactionsUseCaseTest {
         useCase.execute()
 
         assertThat(transaction.status).isEqualTo(TransactionStatus.COMPLETED)
-        verify(transactionRepository).save(transaction)
+        verify(transactionRepository).saveAll(listOf(transaction))
     }
 
     @Test
@@ -96,7 +96,7 @@ class DefaultReconcileTransactionsUseCaseTest {
     }
 
     @Test
-    fun `should leave the transaction PENDING and still save it when handler throws a generic Exception`() {
+    fun `should leave the transaction PENDING and not save or publish it when handler throws a generic Exception`() {
         val transaction = pendingTransaction(TransactionType.CREDIT)
         whenever(transactionRepository.findPending(100)).thenReturn(listOf(transaction))
         whenever(creditHandler.successfullyProcessed(transaction)).doThrow(RuntimeException("erro inesperado"))
@@ -104,7 +104,7 @@ class DefaultReconcileTransactionsUseCaseTest {
         useCase.execute()
 
         assertThat(transaction.status).isEqualTo(TransactionStatus.PENDING)
-        verify(transactionRepository).save(transaction)
+        verify(transactionRepository).saveAll(emptyList())
         verify(eventPublisher, never()).publish(any())
     }
 
@@ -117,7 +117,7 @@ class DefaultReconcileTransactionsUseCaseTest {
         useCaseWithoutHandlers.execute()
 
         assertThat(transaction.status).isEqualTo(TransactionStatus.PENDING)
-        verify(transactionRepository, never()).save(any())
+        verify(transactionRepository).saveAll(emptyList())
         verify(eventPublisher, never()).publish(any())
     }
 
@@ -147,7 +147,7 @@ class DefaultReconcileTransactionsUseCaseTest {
         assertThat(completed.status).isEqualTo(TransactionStatus.COMPLETED)
         assertThat(failed.status).isEqualTo(TransactionStatus.FAILED)
         assertThat(stillPending.status).isEqualTo(TransactionStatus.PENDING)
-        verify(transactionRepository, times(3)).save(any())
+        verify(transactionRepository).saveAll(listOf(completed, failed))
         verify(eventPublisher, times(2)).publish(any())
     }
 

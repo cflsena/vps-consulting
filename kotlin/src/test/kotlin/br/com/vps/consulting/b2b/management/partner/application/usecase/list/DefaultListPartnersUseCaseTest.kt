@@ -27,7 +27,7 @@ class DefaultListPartnersUseCaseTest {
 
     @Test
     fun `should return mapped PageCustom of ListPartnersOutput from repository page`() {
-        val partner = Partner.create(name = "Acme Corp", document = "12345678000100")
+        val partner = Partner.with(name = "Acme Corp", document = "12345678000100")
         val page = PageCustom(pageNumber = 0, pageSize = 20, totalPages = 1, totalElements = 1L, items = listOf(partner))
         whenever(partnerRepository.findAll("12345678000100", 20, 0)).thenReturn(page)
 

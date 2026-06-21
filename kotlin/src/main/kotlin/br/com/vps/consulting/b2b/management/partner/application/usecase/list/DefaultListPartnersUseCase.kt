@@ -10,11 +10,12 @@ class DefaultListPartnersUseCase(
     private val partnerRepository: PartnerRepository,
 ) : ListPartnersUseCase {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     override fun execute(input: ListPartnersInput): PageCustom<ListPartnersOutput> {
-        logger.debug("Listando parceiros [documento=${input.document}, pagina=${input.pageNumber}, tamanho=${input.pageSize}]")
+        log.info("Listando parceiros [documento=${input.document}, pagina=${input.pageNumber}, tamanho=${input.pageSize}]")
         val page = partnerRepository.findAll(input.document, input.pageSize, input.pageNumber)
         return ListPartnersOutput.from(page)
     }
+
 }

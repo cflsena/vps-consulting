@@ -8,8 +8,8 @@ import java.time.Instant
 class PartnerTest {
 
     @Test
-    fun `should create partner via create with generated id`() {
-        val partner = Partner.create(name = "Acme Corp", document = "12345678000100")
+    fun `should create partner via with using a generated id when id is omitted`() {
+        val partner = Partner.with(name = "Acme Corp", document = "12345678000100")
 
         assertThat(partner.id).isNotNull()
         assertThat(partner.name).isEqualTo("Acme Corp")
@@ -17,24 +17,24 @@ class PartnerTest {
     }
 
     @Test
-    fun `should create partner via create with current timestamp as createdAt`() {
+    fun `should create partner via with using the current timestamp when createdAt is omitted`() {
         val before = Instant.now()
 
-        val partner = Partner.create(name = "Acme Corp", document = "12345678000100")
+        val partner = Partner.with(name = "Acme Corp", document = "12345678000100")
 
         assertThat(partner.createdAt).isAfterOrEqualTo(before)
     }
 
     @Test
-    fun `should reject blank name via create`() {
-        assertThatThrownBy { Partner.create(name = "   ", document = "12345678000100") }
+    fun `should reject blank name via with using a generated id`() {
+        assertThatThrownBy { Partner.with(name = "   ", document = "12345678000100") }
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("não pode estar em branco")
     }
 
     @Test
-    fun `should reject blank document via create`() {
-        assertThatThrownBy { Partner.create(name = "Acme Corp", document = "   ") }
+    fun `should reject blank document via with using a generated id`() {
+        assertThatThrownBy { Partner.with(name = "Acme Corp", document = "   ") }
             .isInstanceOf(IllegalArgumentException::class.java)
             .hasMessageContaining("não pode estar em branco")
     }
@@ -53,7 +53,7 @@ class PartnerTest {
     }
 
     @Test
-    fun `should reject blank name via with`() {
+    fun `should reject blank name via with using an explicit id and createdAt`() {
         assertThatThrownBy {
             Partner.with(id = PartnerId.generate(), name = "  ", document = "12345678000100", createdAt = Instant.now())
         }
@@ -62,7 +62,7 @@ class PartnerTest {
     }
 
     @Test
-    fun `should reject blank document via with`() {
+    fun `should reject blank document via with using an explicit id and createdAt`() {
         assertThatThrownBy {
             Partner.with(id = PartnerId.generate(), name = "Acme Corp", document = "  ", createdAt = Instant.now())
         }

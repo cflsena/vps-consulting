@@ -1,22 +1,22 @@
 package br.com.vps.consulting.b2b.management.transaction.infrastructure.api
 
+import br.com.vps.consulting.b2b.management.shared.core.extension.toBrazilianInstant
 import br.com.vps.consulting.b2b.management.shared.infrastructure.api.pagination.PageResponseDTO
 import br.com.vps.consulting.b2b.management.transaction.application.usecase.create.CreateTransactionInput
 import br.com.vps.consulting.b2b.management.transaction.application.usecase.create.CreateTransactionUseCase
 import br.com.vps.consulting.b2b.management.transaction.application.usecase.history.ListTransactionHistoryInput
-import br.com.vps.consulting.b2b.management.transaction.application.usecase.history.ListTransactionHistoryOutput
 import br.com.vps.consulting.b2b.management.transaction.application.usecase.history.ListTransactionHistoryUseCase
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.api.request.CreditTransactionRequest
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.api.request.DebitTransactionRequest
+import br.com.vps.consulting.b2b.management.transaction.infrastructure.api.response.ListTransactionHistoryResponse
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.api.response.TransactionResponse
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.ZoneOffset
-import java.util.UUID
+import java.util.*
 
 @RestController
 class TransactionController(
@@ -57,17 +57,17 @@ class TransactionController(
         type: TransactionType?,
         pageSize: Int,
         pageNumber: Int,
-    ): ResponseEntity<PageResponseDTO<ListTransactionHistoryOutput>> {
+    ): ResponseEntity<PageResponseDTO<ListTransactionHistoryResponse>> {
         val page = listTransactionHistoryUseCase.execute(
             ListTransactionHistoryInput(
                 partnerId = partnerId,
-                from = from?.atStartOfDay(ZoneOffset.UTC)?.toInstant(),
-                to = to?.atTime(LocalTime.MAX)?.atZone(ZoneOffset.UTC)?.toInstant(),
+                from = from?.atStartOfDay()?.toBrazilianInstant(),
+                to = to?.atTime(LocalTime.MAX)?.toBrazilianInstant(),
                 type = type,
                 pageSize = pageSize,
                 pageNumber = pageNumber,
             )
         )
-        return ResponseEntity.ok(PageResponseDTO.from(page))
+        return ResponseEntity.ok(ListTransactionHistoryResponse.from(page))
     }
 }

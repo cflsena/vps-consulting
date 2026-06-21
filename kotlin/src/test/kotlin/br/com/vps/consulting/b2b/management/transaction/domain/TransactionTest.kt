@@ -51,7 +51,7 @@ class TransactionTest {
     fun `should reject negative amount via createAsPending`() {
         assertThatThrownBy { pendingTransaction(amount = Money.of(BigDecimal("-10.00"))) }
             .isInstanceOf(IllegalArgumentException::class.java)
-            .hasMessageContaining("O valor deve ser positivo")
+            .hasMessageContaining("não pode ser negativo")
     }
 
     @Test

@@ -1,33 +1,27 @@
 package br.com.vps.consulting.b2b.management.partner.application.usecase.find
 
+import br.com.vps.consulting.b2b.management.partner.domain.PartnerBalanceRepository
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerRepository
 import br.com.vps.consulting.b2b.management.partner.domain.exception.PartnerNotFoundException
 import jakarta.inject.Named
 import org.slf4j.LoggerFactory
 
 @Named
 class DefaultFindPartnerBalanceUseCase(
-    private val partnerRepository: PartnerRepository,
+    private val partnerBalanceRepository: PartnerBalanceRepository,
 ) : FindPartnerBalanceUseCase {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     override fun execute(input: FindPartnerBalanceInput): FindPartnerBalanceOutput {
-        logger.debug("Consultando saldo do parceiro ${input.partnerId}")
-
-        val balance = partnerRepository.findBalanceById(PartnerId.from(input.partnerId))
+        val partnerId = PartnerId.from(input.partnerId)
+        log.info("Consultando saldo do parceiro ${input.partnerId}")
+        val partnerBalance = partnerBalanceRepository.findBalanceById(partnerId)
             ?: run {
-                logger.warn("Saldo não encontrado para o parceiro ${input.partnerId}")
-                throw PartnerNotFoundException(PartnerId.from(input.partnerId))
+                log.error("Saldo não encontrado para o parceiro ${partnerId.value}")
+                throw PartnerNotFoundException(partnerId)
             }
-
-        logger.debug("Saldo do parceiro ${input.partnerId} consultado com sucesso")
-        return FindPartnerBalanceOutput(
-            partnerId = balance.partnerId.value,
-            totalBalance = balance.totalBalance.value,
-            availableBalance = balance.availableBalance.value,
-            updatedAt = balance.updatedAt,
-        )
+        return FindPartnerBalanceOutput.from(partnerBalance)
     }
+
 }

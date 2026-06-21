@@ -5,6 +5,7 @@ import br.com.vps.consulting.b2b.management.transaction.application.usecase.hist
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.api.request.CreditTransactionRequest
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.api.request.DebitTransactionRequest
+import br.com.vps.consulting.b2b.management.transaction.infrastructure.api.response.ListTransactionHistoryResponse
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.api.response.TransactionResponse
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.Parameter
@@ -73,5 +74,5 @@ interface TransactionApi {
         @Parameter(description = "Filtro por tipo de transação") @RequestParam(required = false) type: TransactionType?,
         @Parameter(description = "Quantidade de registros por página") @RequestParam(defaultValue = "20") pageSize: Int,
         @Parameter(description = "Número da página (base 0)") @RequestParam(defaultValue = "0") pageNumber: Int,
-    ): ResponseEntity<PageResponseDTO<ListTransactionHistoryOutput>>
+    ): ResponseEntity<PageResponseDTO<ListTransactionHistoryResponse>>
 }

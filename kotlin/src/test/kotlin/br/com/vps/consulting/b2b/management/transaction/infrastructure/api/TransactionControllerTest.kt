@@ -116,7 +116,7 @@ class TransactionControllerTest {
     @Test
     fun `should return 200 with paginated transaction history`() {
         val output = ListTransactionHistoryOutput(
-            transactionId = UUID.randomUUID(),
+            id = UUID.randomUUID(),
             type = TransactionType.CREDIT,
             amount = BigDecimal("100.00"),
             description = "Compra de créditos",

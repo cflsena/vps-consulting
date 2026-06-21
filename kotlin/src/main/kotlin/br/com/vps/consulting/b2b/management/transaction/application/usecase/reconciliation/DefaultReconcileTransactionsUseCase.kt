@@ -5,7 +5,6 @@ import br.com.vps.consulting.b2b.management.shared.core.exception.BaseException
 import br.com.vps.consulting.b2b.management.transaction.application.usecase.common.handler.TransactionHandler
 import br.com.vps.consulting.b2b.management.transaction.domain.Transaction
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionRepository
-import br.com.vps.consulting.b2b.management.transaction.domain.TransactionStatus
 import br.com.vps.consulting.b2b.management.transaction.domain.event.TransactionStatusChanged
 import jakarta.inject.Named
 import jakarta.transaction.Transactional
@@ -18,31 +17,39 @@ class DefaultReconcileTransactionsUseCase(
     handlers: List<TransactionHandler>
 ) : ReconcileTransactionsUseCase {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
     private val handlersByType = handlers.associateBy { it.type }
 
     @Transactional
     override fun execute() {
 
         val pendingTransactions = transactionRepository.findPending(limit = 100)
-        logger.info("Reconciliação: ${pendingTransactions.size} transações pendentes encontradas")
+        log.info("Reconciliação: ${pendingTransactions.size} transações pendentes encontradas")
 
-        pendingTransactions.forEach { transaction ->
-            val strategy = handlersByType.getOrDefault(transaction.type, null) ?: return@forEach
-            processTransaction(strategy, transaction)
-            transactionRepository.save(transaction)
-            if (transaction.status != TransactionStatus.PENDING) {
-                eventPublisher.publish(
-                    TransactionStatusChanged(
-                        aggregateId = transaction.id.value,
-                        partnerId = transaction.partnerId,
-                        type = transaction.type,
-                        amount = transaction.amount,
-                        status = transaction.status,
-                    )
-                )
+        val reconciledTransactions = pendingTransactions.mapNotNull { transaction ->
+            handlersByType[transaction.type]?.let { strategy ->
+                processTransaction(strategy, transaction)
+                transaction.takeUnless(Transaction::isPending)
             }
         }
+
+        transactionRepository.saveAll(reconciledTransactions)
+
+        reconciledTransactions.forEach {
+            eventPublisher.publish(
+                TransactionStatusChanged(
+                    aggregateId = it.id.value,
+                    partnerId = it.partnerId,
+                    type = it.type,
+                    amount = it.amount,
+                    status = it.status,
+                )
+            )
+        }
+
+        log.info(
+            "Reconciliação: ${reconciledTransactions.size} transações reconciliadas"
+        )
 
     }
 
@@ -53,12 +60,12 @@ class DefaultReconcileTransactionsUseCase(
             } else {
                 transaction.fail("Operação de saldo não confirmada")
             }
-            logger.info("Transação ${transaction.id.value} reconciliada com status ${transaction.status}")
+            log.info("Transação ${transaction.id.value} reconciliada com status ${transaction.status}")
         } catch (e: BaseException) {
-            logger.warn("Falha de negócio ao reconciliar transação ${transaction.id.value}: ${e.message}")
+            log.warn("Falha de negócio ao reconciliar transação ${transaction.id.value}: ${e.message}")
             transaction.fail(e.message)
         } catch (e: Exception) {
-            logger.warn("Falha inesperada ao reconciliar transação ${transaction.id.value}", e)
+            log.warn("Falha inesperada ao reconciliar transação ${transaction.id.value}", e)
         }
     }
 

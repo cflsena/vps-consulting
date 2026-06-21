@@ -25,4 +25,5 @@ object TransactionSpecification {
         Specification { root, _, cb ->
             if (type == null) cb.conjunction() else cb.equal(root.get<TransactionType>("type"), type)
         }
+
 }

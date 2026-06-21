@@ -1,10 +1,9 @@
 package br.com.vps.consulting.b2b.management.partner.application.usecase.find
 
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerBalance
+import br.com.vps.consulting.b2b.management.partner.domain.PartnerBalanceRepository
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerRepository
 import br.com.vps.consulting.b2b.management.partner.domain.exception.PartnerNotFoundException
-import br.com.vps.consulting.b2b.management.shared.core.vo.Money
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -21,26 +20,26 @@ import java.time.Instant
 class DefaultFindPartnerBalanceUseCaseTest {
 
     @Mock
-    lateinit var partnerRepository: PartnerRepository
+    lateinit var partnerBalanceRepository: PartnerBalanceRepository
 
     private lateinit var useCase: DefaultFindPartnerBalanceUseCase
 
     @BeforeEach
     fun setUp() {
-        useCase = DefaultFindPartnerBalanceUseCase(partnerRepository)
+        useCase = DefaultFindPartnerBalanceUseCase(partnerBalanceRepository)
     }
 
     @Test
     fun `should return mapped FindPartnerBalanceOutput when balance exists`() {
         val partnerId = PartnerId.generate()
         val updatedAt = Instant.now()
-        val balance = PartnerBalance(
-            partnerId = partnerId,
-            totalBalance = Money.of(BigDecimal("100.00")),
-            availableBalance = Money.of(BigDecimal("60.00")),
+        val balance = PartnerBalance.with(
+            id = partnerId,
+            totalBalance = BigDecimal("100.00"),
+            availableBalance = BigDecimal("60.00"),
             updatedAt = updatedAt,
         )
-        whenever(partnerRepository.findBalanceById(eq(partnerId))).thenReturn(balance)
+        whenever(partnerBalanceRepository.findBalanceById(eq(partnerId))).thenReturn(balance)
 
         val result = useCase.execute(FindPartnerBalanceInput(partnerId.value))
 
@@ -53,7 +52,7 @@ class DefaultFindPartnerBalanceUseCaseTest {
     @Test
     fun `should throw PartnerNotFoundException when findBalanceById returns null`() {
         val partnerId = PartnerId.generate()
-        whenever(partnerRepository.findBalanceById(eq(partnerId))).thenReturn(null)
+        whenever(partnerBalanceRepository.findBalanceById(eq(partnerId))).thenReturn(null)
 
         assertThatThrownBy { useCase.execute(FindPartnerBalanceInput(partnerId.value)) }
             .isInstanceOf(PartnerNotFoundException::class.java)

@@ -34,6 +34,8 @@ class Transaction private constructor(
         updatedAt = Instant.now()
     }
 
+    fun isPending() = status == TransactionStatus.PENDING
+
     override fun validate() {
         require(!amount.isNegativeOrZero()) { "O valor deve ser positivo" }
         require(description.isNotBlank()) { "A descrição não pode estar em branco" }

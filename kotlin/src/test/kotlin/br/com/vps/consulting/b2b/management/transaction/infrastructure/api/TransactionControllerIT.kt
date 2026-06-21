@@ -163,7 +163,7 @@ class TransactionControllerIT {
         val result = mockMvc.perform(
             post("/api/v1/b2b/partners")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"Acme Corp","document":"$document"}""")
+                .content("""{"name":"Acme Corp","document":"$document","availableBalance":0.00}""")
         ).andReturn()
         val id = UUID.fromString(jsonMapper.readTree(result.response.contentAsString).get("id").stringValue())
         createdPartnerIds.add(id)

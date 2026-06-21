@@ -103,8 +103,10 @@ class MoneyTest {
     }
 
     @Test
-    fun `should return true for isNegativeOrZero when value is negative`() {
-        assertThat(Money.of(BigDecimal("-1.00")).isNegativeOrZero()).isTrue()
+    fun `should reject construction with a negative value`() {
+        assertThatThrownBy { Money.of(BigDecimal("-1.00")) }
+            .isInstanceOf(IllegalArgumentException::class.java)
+            .hasMessageContaining("não pode ser negativo")
     }
 
     @Test
