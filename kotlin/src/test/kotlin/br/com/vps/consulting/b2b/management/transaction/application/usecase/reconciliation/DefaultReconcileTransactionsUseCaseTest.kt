@@ -48,15 +48,6 @@ class DefaultReconcileTransactionsUseCaseTest {
         useCase = DefaultReconcileTransactionsUseCase(transactionRepository, eventPublisher, listOf(creditHandler, debitHandler))
     }
 
-    private fun pendingTransaction(type: TransactionType = TransactionType.CREDIT, partnerId: UUID = UUID.randomUUID()) =
-        Transaction.createAsPending(
-            partnerId = partnerId,
-            type = type,
-            amount = Money.of(BigDecimal("100.00")),
-            description = "Compra de créditos",
-            idempotencyKey = "key-${UUID.randomUUID()}",
-        )
-
     @Test
     fun `should call findPending with limit 100`() {
         whenever(transactionRepository.findPending(100)).thenReturn(emptyList())
@@ -159,5 +150,15 @@ class DefaultReconcileTransactionsUseCaseTest {
         verify(transactionRepository, times(3)).save(any())
         verify(eventPublisher, times(2)).publish(any())
     }
+
+    private fun pendingTransaction(type: TransactionType = TransactionType.CREDIT, partnerId: UUID = UUID.randomUUID()) =
+        Transaction.createAsPending(
+            partnerId = partnerId,
+            type = type,
+            amount = Money.of(BigDecimal("100.00")),
+            description = "Compra de créditos",
+            idempotencyKey = "key-${UUID.randomUUID()}",
+        )
+
 
 }

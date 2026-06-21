@@ -39,37 +39,6 @@ class DefaultTransactionRepositoryIT {
     @Autowired
     lateinit var partnerJpaRepository: PartnerJpaRepository
 
-    private fun newPartnerId(): UUID {
-        val id = UUID.randomUUID()
-        partnerJpaRepository.save(
-            PartnerEntity(
-                id = id,
-                name = "Acme Corp",
-                document = UUID.randomUUID().toString().replace("-", "").take(14),
-                createdAt = Instant.now(),
-            )
-        )
-        return id
-    }
-
-    private fun newTransaction(
-        partnerId: UUID,
-        type: TransactionType = TransactionType.CREDIT,
-        status: TransactionStatus = TransactionStatus.PENDING,
-        createdAt: Instant = Instant.now(),
-    ): Transaction = Transaction.with(
-        id = TransactionId.generate(),
-        partnerId = partnerId,
-        type = type,
-        amount = Money.of(BigDecimal("100.00")),
-        description = "Compra de créditos",
-        idempotencyKey = "key-${UUID.randomUUID()}",
-        status = status,
-        errorDescription = null,
-        createdAt = createdAt,
-        updatedAt = createdAt,
-    )
-
     @Test
     fun `should save and find transaction by id`() {
         val transaction = newTransaction(newPartnerId())
@@ -181,5 +150,36 @@ class DefaultTransactionRepositoryIT {
         assertThatThrownBy { transactionJpaRepository.saveAndFlush(second.toEntity()) }
             .isInstanceOf(DataIntegrityViolationException::class.java)
     }
+
+    private fun newPartnerId(): UUID {
+        val id = UUID.randomUUID()
+        partnerJpaRepository.save(
+            PartnerEntity(
+                id = id,
+                name = "Acme Corp",
+                document = UUID.randomUUID().toString().replace("-", "").take(14),
+                createdAt = Instant.now(),
+            )
+        )
+        return id
+    }
+
+    private fun newTransaction(
+        partnerId: UUID,
+        type: TransactionType = TransactionType.CREDIT,
+        status: TransactionStatus = TransactionStatus.PENDING,
+        createdAt: Instant = Instant.now(),
+    ): Transaction = Transaction.with(
+        id = TransactionId.generate(),
+        partnerId = partnerId,
+        type = type,
+        amount = Money.of(BigDecimal("100.00")),
+        description = "Compra de créditos",
+        idempotencyKey = "key-${UUID.randomUUID()}",
+        status = status,
+        errorDescription = null,
+        createdAt = createdAt,
+        updatedAt = createdAt,
+    )
 
 }

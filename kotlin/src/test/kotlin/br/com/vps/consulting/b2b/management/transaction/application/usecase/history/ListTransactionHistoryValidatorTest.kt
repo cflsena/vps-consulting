@@ -27,15 +27,6 @@ class ListTransactionHistoryValidatorTest {
         validator = ListTransactionHistoryValidator(partnerService)
     }
 
-    private fun input(partnerId: UUID, from: Instant? = null, to: Instant? = null) = ListTransactionHistoryInput(
-        partnerId = partnerId,
-        from = from,
-        to = to,
-        type = null,
-        pageSize = 20,
-        pageNumber = 0,
-    )
-
     @Test
     fun `should throw TransactionPartnerNotFoundException when partner does not exist`() {
         val partnerId = UUID.randomUUID()
@@ -74,5 +65,14 @@ class ListTransactionHistoryValidatorTest {
 
         assertThatCode { validator.validate(input(partnerId, from = from, to = to)) }.doesNotThrowAnyException()
     }
+
+    private fun input(partnerId: UUID, from: Instant? = null, to: Instant? = null) = ListTransactionHistoryInput(
+        partnerId = partnerId,
+        from = from,
+        to = to,
+        type = null,
+        pageSize = 20,
+        pageNumber = 0,
+    )
 
 }

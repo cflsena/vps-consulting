@@ -51,38 +51,6 @@ class TransactionControllerIT {
         createdPartnerIds.clear()
     }
 
-    private fun createPartner(): UUID {
-        val document = UUID.randomUUID().toString().replace("-", "").take(14)
-        val result = mockMvc.perform(
-            post("/api/v1/b2b/partners")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"name":"Acme Corp","document":"$document"}""")
-        ).andReturn()
-        val id = UUID.fromString(jsonMapper.readTree(result.response.contentAsString).get("id").stringValue())
-        createdPartnerIds.add(id)
-        return id
-    }
-
-    private fun credit(partnerId: UUID, amount: String, idempotencyKey: String = "key-${UUID.randomUUID()}") =
-        mockMvc.perform(
-            post("/api/v1/b2b/partners/$partnerId/transactions/credit")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"amount":$amount,"description":"Compra de créditos","idempotencyKey":"$idempotencyKey"}""")
-        )
-
-    private fun debit(partnerId: UUID, amount: String, idempotencyKey: String = "key-${UUID.randomUUID()}") =
-        mockMvc.perform(
-            post("/api/v1/b2b/partners/$partnerId/transactions/debit")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content("""{"amount":$amount,"description":"Consumo de créditos","idempotencyKey":"$idempotencyKey"}""")
-        )
-
-    private fun trackTransaction(responseBody: String): UUID {
-        val id = UUID.fromString(jsonMapper.readTree(responseBody).get("transactionId").stringValue())
-        createdTransactionIds.add(id)
-        return id
-    }
-
     @Test
     fun `should credit partner balance and return 201 COMPLETED`() {
         val partnerId = createPartner()
@@ -188,6 +156,38 @@ class TransactionControllerIT {
     fun `should return 404 for history when partner does not exist`() {
         mockMvc.perform(get("/api/v1/b2b/partners/${UUID.randomUUID()}/transactions"))
             .andExpect(status().isNotFound)
+    }
+
+    private fun createPartner(): UUID {
+        val document = UUID.randomUUID().toString().replace("-", "").take(14)
+        val result = mockMvc.perform(
+            post("/api/v1/b2b/partners")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"name":"Acme Corp","document":"$document"}""")
+        ).andReturn()
+        val id = UUID.fromString(jsonMapper.readTree(result.response.contentAsString).get("id").stringValue())
+        createdPartnerIds.add(id)
+        return id
+    }
+
+    private fun credit(partnerId: UUID, amount: String, idempotencyKey: String = "key-${UUID.randomUUID()}") =
+        mockMvc.perform(
+            post("/api/v1/b2b/partners/$partnerId/transactions/credit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"amount":$amount,"description":"Compra de créditos","idempotencyKey":"$idempotencyKey"}""")
+        )
+
+    private fun debit(partnerId: UUID, amount: String, idempotencyKey: String = "key-${UUID.randomUUID()}") =
+        mockMvc.perform(
+            post("/api/v1/b2b/partners/$partnerId/transactions/debit")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""{"amount":$amount,"description":"Consumo de créditos","idempotencyKey":"$idempotencyKey"}""")
+        )
+
+    private fun trackTransaction(responseBody: String): UUID {
+        val id = UUID.fromString(jsonMapper.readTree(responseBody).get("transactionId").stringValue())
+        createdTransactionIds.add(id)
+        return id
     }
 
 }
