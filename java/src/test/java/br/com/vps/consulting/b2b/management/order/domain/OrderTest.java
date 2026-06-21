@@ -66,6 +66,17 @@ class OrderTest {
     }
 
     @Test
+    @DisplayName("Given an empty items list, when createPending is called, should reject it because the total amount would be zero")
+    void shouldRejectEmptyItems() {
+        assertThatThrownBy(() -> Order.createPending()
+                .partnerId(UUID.randomUUID())
+                .items(List.of())
+                .build())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessageContaining("Order totalAmount must be greater than zero");
+    }
+
+    @Test
     @DisplayName("Given a PENDING order, when transitionTo APPROVED is called, should approve it")
     void shouldApproveFromPending() {
         final var order = newPendingOrder();

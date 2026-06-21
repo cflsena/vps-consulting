@@ -13,6 +13,7 @@ import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -49,6 +50,28 @@ class DefaultCreateOrderUseCaseTest {
         verify(orderRepository).save(any(Order.class));
         verify(orderItemRepository).saveAll(any(UUID.class), anyList());
         verify(eventPublisher).publish(any(OrderCreated.class));
+    }
+
+    @Test
+    @DisplayName("Given a valid input, when execute is called, should save items under the persisted order's id with the built item list")
+    void shouldSaveItemsWithPersistedOrderIdAndBuiltItems() {
+        final var partnerId = UUID.randomUUID();
+        final var saved = newPendingOrder(partnerId);
+        when(orderRepository.save(any())).thenReturn(saved);
+
+        useCase.execute(newInput(partnerId));
+
+        final var orderIdCaptor = ArgumentCaptor.forClass(UUID.class);
+        @SuppressWarnings("unchecked")
+        final var itemsCaptor = ArgumentCaptor.forClass(List.class);
+        verify(orderItemRepository).saveAll(orderIdCaptor.capture(), itemsCaptor.capture());
+
+        assertThat(orderIdCaptor.getValue()).isEqualTo(saved.getId().value());
+        assertThat(itemsCaptor.getValue()).hasSize(1);
+        final var savedItem = (OrderItem) itemsCaptor.getValue().get(0);
+        assertThat(savedItem.getProductId()).isEqualTo("PROD-001");
+        assertThat(savedItem.getQuantity()).isEqualTo(2);
+        assertThat(savedItem.getUnitPrice().value()).isEqualByComparingTo("50.00");
     }
 
     @Test

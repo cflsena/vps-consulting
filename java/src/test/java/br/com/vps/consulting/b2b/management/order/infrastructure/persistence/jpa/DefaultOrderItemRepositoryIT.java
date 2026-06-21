@@ -2,12 +2,14 @@ package br.com.vps.consulting.b2b.management.order.infrastructure.persistence.jp
 
 import br.com.vps.consulting.b2b.management.TestcontainersConfiguration;
 import br.com.vps.consulting.b2b.management.order.domain.OrderId;
+import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
 import br.com.vps.consulting.b2b.management.order.domain.OrderStatus;
 import br.com.vps.consulting.b2b.management.order.infrastructure.persistence.DefaultOrderItemRepository;
 import br.com.vps.consulting.b2b.management.order.infrastructure.persistence.OrderEntity;
 import br.com.vps.consulting.b2b.management.order.infrastructure.persistence.OrderItemEntity;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerEntity;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.jpa.PartnerJpaRepository;
+import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -96,6 +98,36 @@ class DefaultOrderItemRepositoryIT {
 
         assertThat(page.items()).isEmpty();
         assertThat(page.totalElements()).isZero();
+    }
+
+    @Test
+    @DisplayName("Given an order and a list of items, when saveAll is called, should persist all items linked to that order")
+    void shouldPersistItems_whenSaveAllIsCalled() {
+        final var orderId = createOrderWithItems(0);
+        final var items = List.of(
+                OrderItem.builder().productId("PROD-A").quantity(2).unitPrice(Money.of("10.00")).build(),
+                OrderItem.builder().productId("PROD-B").quantity(1).unitPrice(Money.of("20.00")).build()
+        );
+
+        adapter.saveAll(orderId, items);
+
+        final var persisted = orderItemJpaRepository.findAllByOrderId(orderId, Pageable.unpaged()).getContent();
+        assertThat(persisted).hasSize(2);
+        assertThat(persisted).extracting(OrderItemEntity::getOrderId).containsOnly(orderId);
+        assertThat(persisted).extracting(OrderItemEntity::getProductId).containsExactlyInAnyOrder("PROD-A", "PROD-B");
+        assertThat(persisted).extracting(e -> e.getUnitPrice().stripTrailingZeros())
+                .containsExactlyInAnyOrder(new BigDecimal("10.00").stripTrailingZeros(), new BigDecimal("20.00").stripTrailingZeros());
+    }
+
+    @Test
+    @DisplayName("Given an empty items list, when saveAll is called, should persist nothing")
+    void shouldPersistNothing_whenSaveAllIsCalledWithEmptyList() {
+        final var orderId = createOrderWithItems(0);
+
+        adapter.saveAll(orderId, List.of());
+
+        final var page = adapter.findByOrderId(OrderId.from(orderId), 20, 0);
+        assertThat(page.items()).isEmpty();
     }
 
     private UUID createOrderWithItems(final int itemCount) {
