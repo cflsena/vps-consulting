@@ -39,7 +39,7 @@ class DefaultCreateOrderUseCaseTest {
     @InjectMocks private DefaultCreateOrderUseCase useCase;
 
     @Test
-    @DisplayName("Should create order and return saved order UUID")
+    @DisplayName("Given a valid input, when execute is called, should create the order and return its UUID")
     void shouldCreateOrderAndReturnUUID() {
         final var partnerId = UUID.randomUUID();
         final var saved = newPendingOrder(partnerId);
@@ -53,7 +53,7 @@ class DefaultCreateOrderUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should reserve credit with partnerId and order total amount")
+    @DisplayName("Given a valid input, when execute is called, should reserve credit with the partnerId and order total amount")
     void shouldReserveCreditWithCorrectArgs() {
         final var partnerId = UUID.randomUUID();
         when(orderRepository.save(any())).thenReturn(newPendingOrder(partnerId));
@@ -64,7 +64,7 @@ class DefaultCreateOrderUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should propagate PartnerNotFoundException from credit service")
+    @DisplayName("Given a partner that does not exist, when execute is called, should propagate PartnerNotFoundException from the credit service")
     void shouldThrowWhenPartnerNotFound() {
         final var partnerId = UUID.randomUUID();
         doThrow(new PartnerNotFoundException(partnerId))
@@ -76,7 +76,7 @@ class DefaultCreateOrderUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should propagate InsufficientCreditException from credit service")
+    @DisplayName("Given insufficient credit, when execute is called, should propagate InsufficientCreditException from the credit service")
     void shouldThrowWhenInsufficientCredit() {
         final var partnerId = UUID.randomUUID();
         doThrow(new InsufficientCreditException(partnerId, BigDecimal.TEN, BigDecimal.ZERO))
@@ -88,7 +88,7 @@ class DefaultCreateOrderUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should not save order when credit reservation fails")
+    @DisplayName("Given a failed credit reservation, when execute is called, should not save the order")
     void shouldNotSaveWhenCreditReservationFails() {
         final var partnerId = UUID.randomUUID();
         doThrow(new InsufficientCreditException(partnerId, BigDecimal.TEN, BigDecimal.ZERO))

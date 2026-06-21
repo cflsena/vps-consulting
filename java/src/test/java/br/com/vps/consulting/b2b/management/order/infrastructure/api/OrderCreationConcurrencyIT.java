@@ -66,7 +66,7 @@ class OrderCreationConcurrencyIT {
     }
 
     @Test
-    @DisplayName("Nenhum overdraft sob 200 tentativas concorrentes de criação de pedido para o mesmo parceiro")
+    @DisplayName("Given 200 concurrent order creation attempts for the same partner, when executed, should not allow overdraft")
     void shouldNotExceedCreditLimitUnder200ConcurrentOrders() throws InterruptedException {
         final var creditLimit = new BigDecimal("1000.00");
         final var unitPrice = new BigDecimal("10.00");
@@ -126,7 +126,7 @@ class OrderCreationConcurrencyIT {
     }
 
     @Test
-    @DisplayName("Pedidos concorrentes para parceiros distintos são independentes e todos aprovados")
+    @DisplayName("Given concurrent order creation for distinct partners, when executed, should succeed independently for all of them")
     void shouldHandleConcurrentOrderCreationForDifferentPartners() throws InterruptedException {
         final int partnerCount = 20;
         final var unitPrice = new BigDecimal("100.00");

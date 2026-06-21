@@ -8,8 +8,8 @@ public record Money(BigDecimal value, String currency) implements ValueObject {
     public static final String DEFAULT_CURRENCY = "BRL";
 
     public Money {
-        Objects.requireNonNull(value, "value is required");
-        Objects.requireNonNull(currency, "currency is required");
+        Objects.requireNonNull(value, "value é obrigatório");
+        Objects.requireNonNull(currency, "currency é obrigatório");
         if (value.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("Money value cannot be negative: " + value);
         }

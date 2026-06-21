@@ -51,7 +51,7 @@ class DefaultPartnerRepositoryConcurrencyIT {
     }
 
     @Test
-    @DisplayName("Should not allow overdraft under 200 concurrent reservation attempts")
+    @DisplayName("Given 200 concurrent reservation attempts, when executed, should not allow overdraft")
     void shouldNotOverdraftUnderConcurrentReservations() throws InterruptedException {
         final var limit = new BigDecimal("1000.00");
         final var amountPerRequest = new BigDecimal("10.00");

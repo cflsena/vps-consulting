@@ -14,6 +14,8 @@ import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
 import br.com.vps.consulting.b2b.management.shared.infrastructure.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -49,7 +51,7 @@ class OrderControllerTest {
     @MockitoBean UpdateOrderStatusUseCase updateOrderStatusUseCase;
 
     @Test
-    @DisplayName("POST /api/v1/b2b/orders → 201 with order id")
+    @DisplayName("Given a valid order request, when POST /api/v1/b2b/orders is called, should return 201 with the order id")
     void shouldCreateOrderAndReturn201() throws Exception {
         final var id = UUID.randomUUID();
         given(createOrderUseCase.execute(any())).willReturn(id);
@@ -67,7 +69,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/orders → 400 when items list is empty")
+    @DisplayName("Given an empty items list, when POST /api/v1/b2b/orders is called, should return 400")
     void shouldReturn400WhenItemsIsEmpty() throws Exception {
         mockMvc.perform(post("/api/v1/b2b/orders")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -77,23 +79,29 @@ class OrderControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    @Test
-    @DisplayName("POST /api/v1/b2b/orders → 400 when item quantity is zero")
-    void shouldReturn400WhenItemQuantityIsZero() throws Exception {
+    @ParameterizedTest
+    @DisplayName("Given an item with invalid productId, quantity or unitPrice, when POST /api/v1/b2b/orders is called, should return 400")
+    @CsvSource({
+            "'', 2, 50.00",
+            "PROD-1, 0, 50.00",
+            "PROD-1, 2, -10.00",
+    })
+    void shouldReturn400WhenItemIsInvalid(final String productId, final int quantity, final String unitPrice)
+            throws Exception {
         mockMvc.perform(post("/api/v1/b2b/orders")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
                                   "partnerId":"%s",
-                                  "items":[{"productId":"PROD-1","quantity":0,"unitPrice":10.00}]
+                                  "items":[{"productId":"%s","quantity":%d,"unitPrice":%s}]
                                 }
-                                """.formatted(UUID.randomUUID())))
+                                """.formatted(UUID.randomUUID(), productId, quantity, unitPrice)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders → 200 with paginated list")
+    @DisplayName("Given a request, when GET /api/v1/b2b/orders is called, should return 200 with a paginated list")
     void shouldListOrdersAndReturn200() throws Exception {
         final var page = emptyPage();
         given(listOrdersUseCase.execute(any())).willReturn(page);
@@ -105,7 +113,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders/{id} → 200 with order details")
+    @DisplayName("Given an existing order, when GET /api/v1/b2b/orders/{id} is called, should return 200 with the order details")
     void shouldFindOrderByIdAndReturn200() throws Exception {
         final var id = UUID.randomUUID();
         final var now = OffsetDateTime.now(ZoneOffset.ofHours(-3));
@@ -119,7 +127,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders/{id} → 404 when order not found")
+    @DisplayName("Given a non-existing order, when GET /api/v1/b2b/orders/{id} is called, should return 404")
     void shouldReturn404WhenOrderNotFound() throws Exception {
         final var id = UUID.randomUUID();
         given(findOrderByIdUseCase.execute(id)).willThrow(new OrderNotFoundException(id));
@@ -130,7 +138,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders/{id}/items → 200 with paginated items")
+    @DisplayName("Given an existing order, when GET /api/v1/b2b/orders/{id}/items is called, should return 200 with the paginated items")
     void shouldListOrderItemsAndReturn200() throws Exception {
         final var id = UUID.randomUUID();
         final var page = PageCustom.<OrderItemListOutput>builder()
@@ -145,7 +153,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/orders/{id}/status → 204 on valid transition")
+    @DisplayName("Given a valid status transition, when PATCH /api/v1/b2b/orders/{id}/status is called, should return 204")
     void shouldUpdateOrderStatusAndReturn204() throws Exception {
         final var id = UUID.randomUUID();
         doNothing().when(updateOrderStatusUseCase).execute(any());
@@ -159,7 +167,7 @@ class OrderControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/orders/{id}/status → 422 on invalid transition")
+    @DisplayName("Given an invalid status transition, when PATCH /api/v1/b2b/orders/{id}/status is called, should return 422")
     void shouldReturn422OnInvalidTransition() throws Exception {
         final var id = UUID.randomUUID();
         doThrow(new InvalidOrderTransitionException(id, null, null))

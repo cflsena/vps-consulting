@@ -26,7 +26,7 @@ class DefaultListPartnersUseCaseTest {
     @InjectMocks private DefaultListPartnersUseCase useCase;
 
     @Test
-    @DisplayName("Should return mapped PageCustom<PartnerListOutput> from repository page")
+    @DisplayName("Given a page of partners from the repository, when execute is called, should return a mapped PageCustom<PartnerListOutput>")
     void shouldReturnMappedPage() {
         final var partner = aPartner();
         final var page = PageCustom.<Partner>builder()
@@ -46,7 +46,7 @@ class DefaultListPartnersUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should forward all input parameters to repository")
+    @DisplayName("Given a pagination input, when execute is called, should forward all parameters to the repository")
     void shouldPassInputParamsToRepository() {
         when(partnerRepository.findAll(5, 2)).thenReturn(emptyPage());
 
@@ -56,7 +56,7 @@ class DefaultListPartnersUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should return empty page when no partners exist")
+    @DisplayName("Given no partners exist, when execute is called, should return an empty page")
     void shouldReturnEmptyPageWhenNoPartners() {
         when(partnerRepository.findAll(20, 0)).thenReturn(emptyPage());
 

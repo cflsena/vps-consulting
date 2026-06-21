@@ -11,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class OrderItemTest {
 
     @Test
-    @DisplayName("Should create OrderItem with all fields")
+    @DisplayName("Given all required fields, when building an OrderItem, should create it with all fields set")
     void shouldCreateWithAllFields() {
         final var item = newItem();
         assertThat(item.getId()).isNotNull();
@@ -21,7 +21,7 @@ class OrderItemTest {
     }
 
     @Test
-    @DisplayName("Should generate id when null is provided")
+    @DisplayName("Given a null id, when building an OrderItem, should generate one")
     void shouldGenerateIdWhenNull() {
         final var item = OrderItem.builder()
                 .id(null)
@@ -33,14 +33,14 @@ class OrderItemTest {
     }
 
     @Test
-    @DisplayName("Should calculate subtotal as unit price times quantity")
+    @DisplayName("Given a quantity and unit price, when subtotal is called, should calculate unit price times quantity")
     void shouldCalculateSubtotal() {
         final var item = newItem();
         assertThat(item.subtotal().value()).isEqualByComparingTo("100.00");
     }
 
     @Test
-    @DisplayName("Should reject null productId")
+    @DisplayName("Given a null productId, when building an OrderItem, should reject it with NullPointerException")
     void shouldRejectNullProductId() {
         assertThrows(NullPointerException.class, () -> OrderItem.builder()
                 .productId(null)
@@ -50,7 +50,7 @@ class OrderItemTest {
     }
 
     @Test
-    @DisplayName("Should reject blank productId")
+    @DisplayName("Given a blank productId, when building an OrderItem, should throw IllegalArgumentException")
     void shouldRejectBlankProductId() {
         assertThatThrownBy(() -> OrderItem.builder()
                 .productId("   ")
@@ -62,7 +62,7 @@ class OrderItemTest {
     }
 
     @Test
-    @DisplayName("Should reject null unitPrice")
+    @DisplayName("Given a null unitPrice, when building an OrderItem, should reject it with NullPointerException")
     void shouldRejectNullUnitPrice() {
         assertThrows(NullPointerException.class, () -> OrderItem.builder()
                 .productId("PROD-001")
@@ -72,7 +72,7 @@ class OrderItemTest {
     }
 
     @Test
-    @DisplayName("Should reject zero quantity")
+    @DisplayName("Given a zero quantity, when building an OrderItem, should throw IllegalArgumentException")
     void shouldRejectZeroQuantity() {
         assertThatThrownBy(() -> OrderItem.builder()
                 .productId("PROD-001")
@@ -84,7 +84,7 @@ class OrderItemTest {
     }
 
     @Test
-    @DisplayName("Should reject negative quantity")
+    @DisplayName("Given a negative quantity, when building an OrderItem, should throw IllegalArgumentException")
     void shouldRejectNegativeQuantity() {
         assertThatThrownBy(() -> OrderItem.builder()
                 .productId("PROD-001")

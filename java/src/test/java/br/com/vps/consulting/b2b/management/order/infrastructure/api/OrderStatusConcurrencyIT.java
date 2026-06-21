@@ -68,7 +68,7 @@ class OrderStatusConcurrencyIT {
     }
 
     @Test
-    @DisplayName("50 pedidos independentes com transições de status concorrentes — todos devem ter sucesso")
+    @DisplayName("Given 50 independent orders, when their status transitions are triggered concurrently, should all succeed")
     void shouldHandle50ConcurrentStatusTransitionsForIndependentOrders() throws InterruptedException {
         final int count = 50;
         final var unitPrice = new BigDecimal("100.00");
@@ -122,7 +122,7 @@ class OrderStatusConcurrencyIT {
     }
 
     @Test
-    @DisplayName("50 tentativas concorrentes de cancelar o mesmo pedido — apenas 1 deve ter sucesso e o crédito não é duplicado")
+    @DisplayName("Given 50 concurrent attempts to cancel the same order, when executed, should succeed only once and not duplicate the credit release")
     void shouldPreventDoubleReleaseOnConcurrentCancelOfSameOrder() throws InterruptedException {
         final int totalAttempts = 50;
         final var creditLimit = new BigDecimal("1000.00");

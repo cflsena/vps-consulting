@@ -36,7 +36,7 @@ class DefaultListOrdersUseCaseTest {
     private DefaultListOrdersUseCase useCase;
 
     @Test
-    @DisplayName("Should return mapped PageCustom<OrderListOutput> from repository page")
+    @DisplayName("Given a page of orders from the repository, when execute is called, should return a mapped PageCustom<OrderListOutput>")
     void shouldReturnMappedPage() {
         final var from = Instant.now().minusSeconds(3600);
         final var to = Instant.now();
@@ -54,7 +54,7 @@ class DefaultListOrdersUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should forward all input parameters to repository")
+    @DisplayName("Given a filter input, when execute is called, should forward all parameters to the repository")
     void shouldPassInputParamsToRepository() {
         final var from = Instant.now().minusSeconds(3600);
         final var to = Instant.now();
@@ -67,7 +67,7 @@ class DefaultListOrdersUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should forward partnerId filter to repository")
+    @DisplayName("Given a partnerId filter, when execute is called, should forward it to the repository")
     void shouldPassPartnerIdToRepository() {
         final var partnerId = java.util.UUID.randomUUID();
         when(orderRepository.findByFilter(null, null, null, partnerId, 10, 0))
@@ -79,7 +79,7 @@ class DefaultListOrdersUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should throw DomainException when from is after to")
+    @DisplayName("Given a from date after the to date, when execute is called, should throw DomainException")
     void shouldThrowWhenFromIsAfterTo() {
         final var from = Instant.now();
         final var to = from.minusSeconds(1);

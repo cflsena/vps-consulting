@@ -30,7 +30,7 @@ class DefaultAdjustCreditLimitUseCaseTest {
     @InjectMocks private DefaultAdjustCreditLimitUseCase useCase;
 
     @Test
-    @DisplayName("Should adjust credit limit")
+    @DisplayName("Given a valid new limit, when execute is called, should adjust the credit limit")
     void shouldAdjustCreditLimit() {
         final var partnerId = UUID.randomUUID();
         when(partnerRepository.findCreditById(PartnerId.from(partnerId))).thenReturn(Optional.of(creditWith("10000", "10000", "0")));
@@ -42,7 +42,7 @@ class DefaultAdjustCreditLimitUseCaseTest {
 
     // creditLimit=1000, availableBalance=600, reservedBalance=200 → debited=400 → minimumLimit=600
     @Test
-    @DisplayName("Should recalculate correctly when there are existing debits and reservations")
+    @DisplayName("Given existing debits and reservations, when execute is called, should allow adjustment above the recalculated minimum limit")
     void shouldAllowAdjustmentAboveMinimumLimit() {
         final var partnerId = UUID.randomUUID();
 
@@ -55,7 +55,7 @@ class DefaultAdjustCreditLimitUseCaseTest {
 
     // creditLimit=1000, availableBalance=600, reservedBalance=200 → debited=400 → minimumLimit=600
     @Test
-    @DisplayName("Should throw CreditLimitBelowReservationException when new limit is below minimum")
+    @DisplayName("Given a new limit below the minimum, when execute is called, should throw CreditLimitBelowReservationException")
     void shouldThrowWhenNewLimitBelowMinimum() {
         final var partnerId = UUID.randomUUID();
 
@@ -68,7 +68,7 @@ class DefaultAdjustCreditLimitUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should throw PartnerNotFoundException when partner does not exist")
+    @DisplayName("Given a non-existing partner, when execute is called, should throw PartnerNotFoundException")
     void shouldThrowWhenPartnerNotFound() {
         final var partnerId = UUID.randomUUID();
         when(partnerRepository.findCreditById(any())).thenReturn(Optional.empty());
@@ -79,7 +79,7 @@ class DefaultAdjustCreditLimitUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should not adjust credit when partner is not found")
+    @DisplayName("Given a non-existing partner, when execute is called, should not adjust the credit limit")
     void shouldNotAdjustWhenPartnerNotFound() {
         when(partnerRepository.findCreditById(any())).thenReturn(Optional.empty());
 

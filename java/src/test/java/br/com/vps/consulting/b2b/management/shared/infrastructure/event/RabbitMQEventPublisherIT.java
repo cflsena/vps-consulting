@@ -36,7 +36,7 @@ class RabbitMQEventPublisherIT {
     @Autowired private RabbitTemplate rabbitTemplate;
 
     @Test
-    @DisplayName("Should publish OrderCreated event to RabbitMQ when order is created")
+    @DisplayName("Given a created order, when the use case completes, should publish an OrderCreated event to RabbitMQ")
     void shouldPublishOrderCreatedEventToRabbitMQ() {
         final var partnerId = setupPartner(new BigDecimal("1000.00"));
 

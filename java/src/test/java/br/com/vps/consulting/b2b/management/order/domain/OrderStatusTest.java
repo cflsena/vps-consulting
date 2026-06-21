@@ -16,20 +16,20 @@ class OrderStatusTest {
 
     @ParameterizedTest(name = "{0} → {1}")
     @MethodSource("validTransitions")
-    @DisplayName("Should allow valid status transitions")
+    @DisplayName("Given a valid status pair, when canTransitionTo is called, should return true")
     void shouldAllowValidTransitions(OrderStatus from, OrderStatus to) {
         assertThat(from.canTransitionTo(to)).isTrue();
     }
 
     @ParameterizedTest(name = "{0} → {1}")
     @MethodSource("invalidTransitions")
-    @DisplayName("Should reject invalid status transitions")
+    @DisplayName("Given an invalid status pair, when canTransitionTo is called, should return false")
     void shouldRejectInvalidTransitions(OrderStatus from, OrderStatus to) {
         assertThat(from.canTransitionTo(to)).isFalse();
     }
 
     @Test
-    @DisplayName("Should DELIVERED be a terminal status")
+    @DisplayName("Given the DELIVERED status, when canTransitionTo is called for any status, should always return false")
     void shouldDeliveredBeTerminal() {
         for (OrderStatus next : OrderStatus.values()) {
             assertThat(DELIVERED.canTransitionTo(next)).isFalse();
@@ -37,7 +37,7 @@ class OrderStatusTest {
     }
 
     @Test
-    @DisplayName("Should CANCELED be a terminal status")
+    @DisplayName("Given the CANCELED status, when canTransitionTo is called for any status, should always return false")
     void shouldCanceledBeTerminal() {
         for (OrderStatus next : OrderStatus.values()) {
             assertThat(CANCELED.canTransitionTo(next)).isFalse();

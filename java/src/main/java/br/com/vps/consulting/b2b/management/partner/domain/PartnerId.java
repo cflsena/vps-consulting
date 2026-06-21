@@ -8,7 +8,7 @@ import java.util.UUID;
 public record PartnerId(UUID value) implements Identifier<UUID> {
 
     public PartnerId {
-        Objects.requireNonNull(value, "PartnerId value is required");
+        Objects.requireNonNull(value, "PartnerId value é obrigatório");
     }
 
     public static PartnerId generate() {
@@ -27,4 +27,5 @@ public record PartnerId(UUID value) implements Identifier<UUID> {
     public String toString() {
         return value.toString();
     }
+
 }

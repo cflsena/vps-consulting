@@ -43,7 +43,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
     @InjectMocks private DefaultUpdateOrderStatusUseCase useCase;
 
     @Test
-    @DisplayName("Should transition order to target status and save")
+    @DisplayName("Given a valid target status, when execute is called, should transition the order and save it")
     void shouldUpdateOrderStatusAndSave() {
         final var orderId = UUID.randomUUID();
         final var order = orderInState(orderId, OrderStatus.PENDING);
@@ -56,7 +56,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should publish OrderStatusChanged event with correct previous and new status")
+    @DisplayName("Given a status transition, when execute is called, should publish an OrderStatusChanged event with the correct previous and new status")
     void shouldPublishOrderStatusChangedEvent() {
         final var orderId = UUID.randomUUID();
         final var order = orderInState(orderId, OrderStatus.PENDING);
@@ -71,7 +71,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should debit reservation when transitioning from PENDING to APPROVED")
+    @DisplayName("Given an order transitioning from PENDING to APPROVED, when execute is called, should debit the reservation")
     void shouldDebitReservationWhenApprovingPendingOrder() {
         final var partnerId = UUID.randomUUID();
         final var order = orderInStateWithPartner(UUID.randomUUID(), partnerId, OrderStatus.PENDING);
@@ -83,7 +83,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should not interact with credit service on non-approval transitions")
+    @DisplayName("Given a non-approval transition, when execute is called, should not interact with the credit service")
     void shouldNotInteractWithCreditServiceOnOtherTransitions() {
         final var order = orderInState(UUID.randomUUID(), OrderStatus.APPROVED);
         when(orderRepository.findById(any())).thenReturn(Optional.of(order));
@@ -96,7 +96,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should release reservation when canceling a PENDING order")
+    @DisplayName("Given a PENDING order being canceled, when execute is called, should release the reservation")
     void shouldReleaseReservationWhenCancelingPendingOrder() {
         final var partnerId = UUID.randomUUID();
         final var order = orderInStateWithPartner(UUID.randomUUID(), partnerId, OrderStatus.PENDING);
@@ -109,7 +109,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should refund debit when canceling an APPROVED order")
+    @DisplayName("Given an APPROVED order being canceled, when execute is called, should refund the debit")
     void shouldRefundDebitWhenCancelingApprovedOrder() {
         final var partnerId = UUID.randomUUID();
         final var order = orderInStateWithPartner(UUID.randomUUID(), partnerId, OrderStatus.APPROVED);
@@ -122,7 +122,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should publish cancellation event with refundedAmount and currency when canceling")
+    @DisplayName("Given an order being canceled, when execute is called, should publish a cancellation event with refundedAmount and currency")
     void shouldPublishCancellationEventWithRefundFields() {
         final var order = orderInState(UUID.randomUUID(), OrderStatus.APPROVED);
         when(orderRepository.findById(any())).thenReturn(Optional.of(order));
@@ -139,7 +139,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should publish event without refundedAmount on non-cancellation transitions")
+    @DisplayName("Given a non-cancellation transition, when execute is called, should publish an event without refundedAmount")
     void shouldPublishEventWithoutRefundFieldsOnNonCancellation() {
         var order = orderInState(UUID.randomUUID(), OrderStatus.PENDING);
         when(orderRepository.findById(any())).thenReturn(Optional.of(order));
@@ -153,7 +153,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should throw OrderNotFoundException when order does not exist")
+    @DisplayName("Given a non-existing order, when execute is called, should throw OrderNotFoundException")
     void shouldThrowWhenOrderNotFound() {
         var orderId = UUID.randomUUID();
         when(orderRepository.findById(OrderId.from(orderId))).thenReturn(Optional.empty());
@@ -164,7 +164,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should throw InvalidOrderTransitionException on invalid transition and not save")
+    @DisplayName("Given an invalid status transition, when execute is called, should throw InvalidOrderTransitionException and not save")
     void shouldThrowOnInvalidTransition() {
         var orderId = UUID.randomUUID();
         var order = orderInState(orderId, OrderStatus.DELIVERED);

@@ -14,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class PartnerTest {
 
     @Test
-    @DisplayName("Should create partner with provided id")
+    @DisplayName("Given a provided id, when building a Partner, should create it with that id")
     void shouldCreateWithProvidedId() {
         final var id = PartnerId.generate();
         final var partner = newPartner(id);
@@ -22,7 +22,7 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should generate id when null is provided")
+    @DisplayName("Given a null id, when building a Partner, should generate one")
     void shouldGenerateIdWhenNull() {
         final var partner = Partner.builder()
                 .id(null)
@@ -34,7 +34,7 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should set current time as createdAt when null is provided")
+    @DisplayName("Given a null createdAt, when building a Partner, should set the current time")
     void shouldSetCurrentTimeWhenCreatedAtIsNull() {
         final var before = Instant.now();
         final var partner = Partner.builder()
@@ -47,7 +47,7 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should store creditLimit as Money")
+    @DisplayName("Given a BigDecimal creditLimit, when building a Partner, should store it as Money")
     void shouldStoreCreditLimitAsMoney() {
         final var partner = newPartner();
         assertThat(partner.getCreditLimit().value()).isEqualByComparingTo("10000.00");
@@ -55,7 +55,7 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should reject null name")
+    @DisplayName("Given a null name, when building a Partner, should reject it with NullPointerException")
     void shouldRejectNullName() {
         assertThrows(NullPointerException.class, () -> Partner.builder()
                 .name(null)
@@ -65,7 +65,7 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should reject blank name")
+    @DisplayName("Given a blank name, when building a Partner, should throw IllegalArgumentException")
     void shouldRejectBlankName() {
         assertThatThrownBy(() -> Partner.builder()
                 .name("   ")
@@ -77,7 +77,7 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should reject null document")
+    @DisplayName("Given a null document, when building a Partner, should reject it with NullPointerException")
     void shouldRejectNullDocument() {
         assertThrows(NullPointerException.class, () -> Partner.builder()
                 .name("Acme Corp")
@@ -87,7 +87,7 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should reject blank document")
+    @DisplayName("Given a blank document, when building a Partner, should throw IllegalArgumentException")
     void shouldRejectBlankDocument() {
         assertThatThrownBy(() -> Partner.builder()
                 .name("Acme Corp")
@@ -99,7 +99,7 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should reject null creditLimit")
+    @DisplayName("Given a null creditLimit, when building a Partner, should reject it with NullPointerException")
     void shouldRejectNullCreditLimit() {
         assertThrows(NullPointerException.class, () -> Partner.builder()
                 .name("Acme Corp")
@@ -109,7 +109,7 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should reject negative creditLimit")
+    @DisplayName("Given a negative creditLimit, when building a Partner, should throw IllegalArgumentException")
     void shouldRejectNegativeCreditLimit() {
         assertThatThrownBy(() -> Partner.builder()
                 .name("Acme Corp")
@@ -121,7 +121,7 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should adjust credit limit to new value")
+    @DisplayName("Given a valid new value, when adjustCreditLimit is called, should update the credit limit")
     void shouldAdjustCreditLimit() {
         final var partner = newPartner();
         assertDoesNotThrow(() -> partner.adjustCreditLimit(new BigDecimal("25000.00")));
@@ -129,14 +129,14 @@ class PartnerTest {
     }
 
     @Test
-    @DisplayName("Should reject null in adjustCreditLimit")
+    @DisplayName("Given a null value, when adjustCreditLimit is called, should reject it with NullPointerException")
     void shouldRejectNullInAdjustCreditLimit() {
         final var partner = newPartner();
         assertThrows(NullPointerException.class, () -> partner.adjustCreditLimit(null));
     }
 
     @Test
-    @DisplayName("Should reject negative value in adjustCreditLimit")
+    @DisplayName("Given a negative value, when adjustCreditLimit is called, should throw IllegalArgumentException")
     void shouldRejectNegativeValueInAdjustCreditLimit() {
         final var partner = newPartner();
         assertThatThrownBy(() -> partner.adjustCreditLimit(new BigDecimal("-500.00")))

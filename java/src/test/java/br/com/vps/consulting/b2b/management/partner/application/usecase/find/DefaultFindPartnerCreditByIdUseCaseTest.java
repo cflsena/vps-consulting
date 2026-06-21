@@ -27,7 +27,7 @@ class DefaultFindPartnerCreditByIdUseCaseTest {
     @InjectMocks private DefaultFindPartnerCreditByIdUseCase useCase;
 
     @Test
-    @DisplayName("Should return credit from repository")
+    @DisplayName("Given an existing partner, when execute is called, should return the credit from the repository")
     void shouldReturnCreditFromRepository() {
         final var partnerId = UUID.randomUUID();
         final var credit = aPartnerCredit();
@@ -39,7 +39,7 @@ class DefaultFindPartnerCreditByIdUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should throw PartnerNotFoundException when credit record not found")
+    @DisplayName("Given a non-existing credit record, when execute is called, should throw PartnerNotFoundException")
     void shouldThrowWhenCreditNotFound() {
         final var partnerId = UUID.randomUUID();
         when(partnerRepository.findCreditById(PartnerId.from(partnerId))).thenReturn(Optional.empty());

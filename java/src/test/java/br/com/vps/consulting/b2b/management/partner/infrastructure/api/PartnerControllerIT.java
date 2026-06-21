@@ -52,7 +52,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/partners → 201 cria parceiro com crédito associado")
+    @DisplayName("Given a valid partner request, when POST /api/v1/b2b/partners is called, should return 201 and create the partner with its credit")
     void shouldCreatePartnerAndReturn201() throws Exception {
         final var result = mockMvc.perform(post("/api/v1/b2b/partners")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -73,7 +73,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/partners → 400 quando name está vazio")
+    @DisplayName("Given a blank name, when POST /api/v1/b2b/partners is called, should return 400")
     void shouldReturn400WhenNameIsBlank() throws Exception {
         mockMvc.perform(post("/api/v1/b2b/partners")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -85,7 +85,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/partners → 400 quando creditLimit é nulo")
+    @DisplayName("Given a null creditLimit, when POST /api/v1/b2b/partners is called, should return 400")
     void shouldReturn400WhenCreditLimitIsNull() throws Exception {
         mockMvc.perform(post("/api/v1/b2b/partners")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -97,7 +97,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/partners → 409 quando documento já existe")
+    @DisplayName("Given a duplicated document, when POST /api/v1/b2b/partners is called, should return 409")
     void shouldReturn409WhenDocumentDuplicated() throws Exception {
         final var document = doc();
         final var result = mockMvc.perform(post("/api/v1/b2b/partners")
@@ -120,7 +120,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/partners → 200 com estrutura de paginação")
+    @DisplayName("Given a request, when GET /api/v1/b2b/partners is called, should return 200 with the pagination structure")
     void shouldListPartnersWithPaginationStructure() throws Exception {
         mockMvc.perform(get("/api/v1/b2b/partners"))
                 .andExpect(status().isOk())
@@ -131,7 +131,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/partners → 200 retorna parceiro recém-criado na lista")
+    @DisplayName("Given a newly created partner, when GET /api/v1/b2b/partners is called, should include it in the list")
     void shouldListIncludeCreatedPartner() throws Exception {
         final var id = createPartner("5000.00");
 
@@ -141,7 +141,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/partners/{id}/credit → 200 com dados completos de crédito")
+    @DisplayName("Given an existing partner, when GET /api/v1/b2b/partners/{id}/credit is called, should return 200 with the full credit data")
     void shouldReturnCreditData() throws Exception {
         final var id = createPartner("10000.00");
 
@@ -155,7 +155,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/partners/{id}/credit → 404 quando parceiro não existe")
+    @DisplayName("Given a non-existing partner, when GET /api/v1/b2b/partners/{id}/credit is called, should return 404")
     void shouldReturn404WhenPartnerNotFound() throws Exception {
         mockMvc.perform(get("/api/v1/b2b/partners/{id}/credit", UUID.randomUUID()))
                 .andExpect(status().isNotFound())
@@ -165,7 +165,7 @@ class PartnerControllerIT {
 
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/credit-limit → 204 e novo limite persistido")
+    @DisplayName("Given a valid new limit, when PATCH /api/v1/b2b/partners/{id}/credit-limit is called, should return 204 and persist it")
     void shouldAdjustCreditLimitAndReturn204() throws Exception {
         final var id = createPartner("1000.00");
 
@@ -182,7 +182,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/credit-limit → 400 quando body inválido")
+    @DisplayName("Given an invalid body, when PATCH /api/v1/b2b/partners/{id}/credit-limit is called, should return 400")
     void shouldReturn400WhenCreditLimitBodyInvalid() throws Exception {
         final var id = createPartner("1000.00");
 
@@ -195,7 +195,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/credit-limit → 404 quando parceiro não existe")
+    @DisplayName("Given a non-existing partner, when PATCH /api/v1/b2b/partners/{id}/credit-limit is called, should return 404")
     void shouldReturn404WhenPartnerNotFoundForCreditLimit() throws Exception {
         mockMvc.perform(patch("/api/v1/b2b/partners/{id}/credit-limit", UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -207,7 +207,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/credit-limit → 422 quando novo limite é inferior ao reservado")
+    @DisplayName("Given a new limit below the reserved balance, when PATCH /api/v1/b2b/partners/{id}/credit-limit is called, should return 422")
     void shouldReturn422WhenLimitBelowReserved() throws Exception {
         final var id = createPartner("1000.00");
         creditRepo.reserveCredit(id, new BigDecimal("600.00"));
@@ -222,7 +222,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/available-credit → 204 e saldo atualizado")
+    @DisplayName("Given a valid amount, when PATCH /api/v1/b2b/partners/{id}/available-credit is called, should return 204 and update the balance")
     void shouldReplenishAvailableCreditAndReturn204() throws Exception {
         final var id = createPartner("1000.00");
         creditRepo.reserveCredit(id, new BigDecimal("300.00"));
@@ -240,7 +240,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/available-credit → 400 quando amount é nulo")
+    @DisplayName("Given a null amount, when PATCH /api/v1/b2b/partners/{id}/available-credit is called, should return 400")
     void shouldReturn400WhenReplenishAmountIsNull() throws Exception {
         final var id = createPartner("1000.00");
 
@@ -254,7 +254,7 @@ class PartnerControllerIT {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/available-credit → 404 quando parceiro não existe")
+    @DisplayName("Given a non-existing partner, when PATCH /api/v1/b2b/partners/{id}/available-credit is called, should return 404")
     void shouldReturn404WhenPartnerNotFoundForReplenish() throws Exception {
         mockMvc.perform(patch("/api/v1/b2b/partners/{id}/available-credit", UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)

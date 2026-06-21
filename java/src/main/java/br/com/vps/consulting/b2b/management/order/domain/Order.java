@@ -67,9 +67,9 @@ public class Order extends Entity<OrderId> {
 
     @Override
     protected void validate() {
-        Objects.requireNonNull(this.id, "OrderId is required");
-        Objects.requireNonNull(this.partnerId, "PartnerId is required");
-        Objects.requireNonNull(this.items, "items is required");
+        Objects.requireNonNull(this.id, "OrderId é obrigatório");
+        Objects.requireNonNull(this.partnerId, "PartnerId é obrigatório");
+        Objects.requireNonNull(this.items, "items é obrigatório");
         if (items.isEmpty()) throw new IllegalArgumentException("Order must have at least one item");
         if (this.totalAmount.isZero())
             throw new IllegalArgumentException("Order totalAmount must be greater than zero");

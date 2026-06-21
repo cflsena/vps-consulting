@@ -27,7 +27,7 @@ class DefaultListOrderItemsUseCaseTest {
     @InjectMocks private DefaultListOrderItemsUseCase useCase;
 
     @Test
-    @DisplayName("Should return mapped PageCustom<OrderItemListOutput> from repository")
+    @DisplayName("Given a page of items from the repository, when execute is called, should return a mapped PageCustom<OrderItemListOutput>")
     void shouldReturnMappedItemsPage() {
         final var orderId = UUID.randomUUID();
         final var page = PageCustom.<OrderItem>builder()
@@ -44,7 +44,7 @@ class DefaultListOrderItemsUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should forward orderId and pagination parameters to repository")
+    @DisplayName("Given an orderId and pagination parameters, when execute is called, should forward them to the repository")
     void shouldPassOrderIdAndPaginationToRepository() {
         var orderId = UUID.randomUUID();
         when(orderItemRepository.findByOrderId(OrderId.from(orderId), 5, 2))

@@ -31,9 +31,9 @@ public class OrderItem extends Entity<OrderItemId> {
 
     @Override
     protected void validate() {
-        Objects.requireNonNull(this.id, "OrderItem id is required");
-        Objects.requireNonNull(this.productId, "productId is required");
-        Objects.requireNonNull(this.unitPrice, "unitPrice is required");
+        Objects.requireNonNull(this.id, "OrderItem id é obrigatório");
+        Objects.requireNonNull(this.productId, "productId é obrigatório");
+        Objects.requireNonNull(this.unitPrice, "unitPrice é obrigatório");
         if (this.productId.isBlank()) throw new IllegalArgumentException("productId cannot be blank");
         if (this.quantity <= 0) throw new IllegalArgumentException("quantity must be positive: " + quantity);
     }

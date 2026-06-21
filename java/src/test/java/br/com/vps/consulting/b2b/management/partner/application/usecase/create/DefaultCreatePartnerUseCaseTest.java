@@ -24,7 +24,7 @@ class DefaultCreatePartnerUseCaseTest {
     @InjectMocks private DefaultCreatePartnerUseCase useCase;
 
     @Test
-    @DisplayName("Should create partner and return its UUID")
+    @DisplayName("Given a valid input, when execute is called, should create the partner and return its UUID")
     void shouldCreatePartnerAndReturnUUID() {
         final var partner = newPartner();
         when(partnerRepository.save(any())).thenReturn(partner);

@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class OrderTest {
 
     @Test
-    @DisplayName("Should create pending order with generated id")
+    @DisplayName("Given a valid partnerId and items, when createPending is called, should create a pending order with a generated id")
     void shouldCreatePendingOrderWithGeneratedId() {
         final var order = newPendingOrder();
         assertThat(order.getId()).isNotNull();
@@ -26,7 +26,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should set createdAt and updatedAt on creation")
+    @DisplayName("Given a new pending order, when created, should set createdAt and updatedAt")
     void shouldSetTimestampsOnCreation() {
         final var order = newPendingOrder();
         assertThat(order.getCreatedAt()).isNotNull();
@@ -34,7 +34,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should calculate total value from items")
+    @DisplayName("Given a list of items, when createPending is called, should calculate the total amount from them")
     void shouldCalculateTotalAmountFromItems() {
         final var items = List.of(
                 item("PROD-A", 2, "30.00"),
@@ -48,7 +48,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should reject null partnerId")
+    @DisplayName("Given a null partnerId, when createPending is called, should reject it with NullPointerException")
     void shouldRejectNullPartnerId() {
         assertThrows(NullPointerException.class, () -> Order.createPending()
                 .partnerId(null)
@@ -57,7 +57,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should reject null items list")
+    @DisplayName("Given a null items list, when createPending is called, should reject it with NullPointerException")
     void shouldRejectNullItems() {
         assertThrows(NullPointerException.class, () -> Order.createPending()
                 .partnerId(PartnerId.generate())
@@ -66,7 +66,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should reject empty items list")
+    @DisplayName("Given an empty items list, when createPending is called, should throw IllegalArgumentException")
     void shouldRejectEmptyItems() {
         assertThatThrownBy(() -> Order.createPending()
                 .partnerId(PartnerId.generate())
@@ -77,7 +77,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should approve order from PENDING status")
+    @DisplayName("Given a PENDING order, when transitionTo APPROVED is called, should approve it")
     void shouldApproveFromPending() {
         final var order = newPendingOrder();
         assertDoesNotThrow(() -> order.transitionTo(OrderStatus.APPROVED));
@@ -85,7 +85,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should mark processing from APPROVED status")
+    @DisplayName("Given an APPROVED order, when transitionTo IN_PROCESS is called, should mark it as processing")
     void shouldMarkProcessingFromApproved() {
         final var order = newPendingOrder();
         order.transitionTo(OrderStatus.APPROVED);
@@ -94,7 +94,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should mark shipped from IN_PROCESS status")
+    @DisplayName("Given an IN_PROCESS order, when transitionTo SENT is called, should mark it as shipped")
     void shouldMarkShippedFromInProcess() {
         final var order = newPendingOrder();
         order.transitionTo(OrderStatus.APPROVED);
@@ -104,7 +104,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should mark delivered from SENT status")
+    @DisplayName("Given a SENT order, when transitionTo DELIVERED is called, should mark it as delivered")
     void shouldMarkDeliveredFromSent() {
         final var order = newPendingOrder();
         order.transitionTo(OrderStatus.APPROVED);
@@ -115,7 +115,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should cancel order from PENDING status")
+    @DisplayName("Given a PENDING order, when transitionTo CANCELED is called, should cancel it")
     void shouldCancelFromPending() {
         final var order = newPendingOrder();
         assertDoesNotThrow(() -> order.transitionTo(OrderStatus.CANCELED));
@@ -123,7 +123,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should cancel order from APPROVED status")
+    @DisplayName("Given an APPROVED order, when transitionTo CANCELED is called, should cancel it")
     void shouldCancelFromApproved() {
         final var order = newPendingOrder();
         order.transitionTo(OrderStatus.APPROVED);
@@ -132,7 +132,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should update updatedAt after status transition")
+    @DisplayName("Given a status transition, when transitionTo is called, should update updatedAt")
     void shouldUpdateUpdatedAtAfterTransitionTo() {
         final var order = newPendingOrder();
         final var before = order.getUpdatedAt();
@@ -141,7 +141,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should reject invalid transition from PENDING to DELIVERED")
+    @DisplayName("Given a PENDING order, when transitionTo DELIVERED is called, should throw InvalidOrderTransitionException")
     void shouldRejectInvalidTransitionToFromPendingToDelivered() {
         final var order = newPendingOrder();
         assertThatThrownBy(() -> order.transitionTo(OrderStatus.DELIVERED))
@@ -150,7 +150,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should reject transition from DELIVERED (terminal state)")
+    @DisplayName("Given a DELIVERED order, when any transitionTo is called, should throw InvalidOrderTransitionException")
     void shouldRejectTransitionToFromDelivered() {
         final var order = newPendingOrder();
         order.transitionTo(OrderStatus.APPROVED);
@@ -162,7 +162,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should reject transition from CANCELED (terminal state)")
+    @DisplayName("Given a CANCELED order, when any transitionTo is called, should throw InvalidOrderTransitionException")
     void shouldRejectTransitionToFromCanceled() {
         final var order = newPendingOrder();
         order.transitionTo(OrderStatus.CANCELED);
@@ -171,7 +171,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should reconstitute order from all fields via default builder")
+    @DisplayName("Given all fields, when using the default builder, should reconstitute the order")
     void shouldReconstituteFromBuilder() {
         final var id = OrderId.generate();
         final var partnerId = PartnerId.generate();
@@ -196,7 +196,7 @@ class OrderTest {
     }
 
     @Test
-    @DisplayName("Should store immutable copy of items list")
+    @DisplayName("Given a pending order, when getItems is called, should return an immutable copy of the items list")
     void shouldStoreImmutableItemsList() {
         final var order = newPendingOrder();
         assertThatThrownBy(() -> order.getItems().add(newItem()))

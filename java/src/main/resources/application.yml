@@ -31,23 +31,6 @@ management:
     health:
       show-details: always
 
----
-spring:
-  config:
-    activate:
-      on-profile: local
-
 logging:
   level:
-    br.com.vps: DEBUG
-
----
-spring:
-  config:
-    activate:
-      on-profile: test
-  flyway:
-    enabled: true
-  jpa:
-    hibernate:
-      ddl-auto: validate
+    br.com.vps: INFO

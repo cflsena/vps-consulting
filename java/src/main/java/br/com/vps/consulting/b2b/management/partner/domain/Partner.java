@@ -33,16 +33,16 @@ public class Partner extends Entity<PartnerId> {
     }
 
     public void adjustCreditLimit(final BigDecimal newLimit) {
-        Objects.requireNonNull(newLimit, "newLimit is required");
+        Objects.requireNonNull(newLimit, "newLimit é obrigatório");
         this.creditLimit = Money.of(newLimit);
     }
 
     @Override
     protected void validate() {
-        Objects.requireNonNull(this.id, "PartnerId is required");
-        Objects.requireNonNull(this.name, "name is required");
-        Objects.requireNonNull(this.document, "document is required");
-        Objects.requireNonNull(this.creditLimit, "creditLimit is required");
+        Objects.requireNonNull(this.id, "PartnerId é obrigatório");
+        Objects.requireNonNull(this.name, "name é obrigatório");
+        Objects.requireNonNull(this.document, "document é obrigatório");
+        Objects.requireNonNull(this.creditLimit, "creditLimit é obrigatório");
         if (this.name.isBlank()) throw new IllegalArgumentException("name cannot be blank");
         if (this.document.isBlank()) throw new IllegalArgumentException("document cannot be blank");
     }

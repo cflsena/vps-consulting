@@ -14,6 +14,8 @@ import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
 import br.com.vps.consulting.b2b.management.shared.infrastructure.exception.GlobalExceptionHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -54,7 +56,7 @@ class PartnerControllerTest {
     ListPartnersUseCase listPartnersUseCase;
 
     @Test
-    @DisplayName("GET /api/v1/b2b/partners → 200 with paginated list")
+    @DisplayName("Given a request, when GET /api/v1/b2b/partners is called, should return 200 with a paginated list")
     void shouldListPartnersAndReturn200() throws Exception {
         given(listPartnersUseCase.execute(any())).willReturn(emptyPage());
 
@@ -66,7 +68,7 @@ class PartnerControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/partners → 200 returns partner fields in items")
+    @DisplayName("Given an existing partner, when GET /api/v1/b2b/partners is called, should return 200 with the partner fields in the items")
     void shouldReturnPartnerFieldsInListItems() throws Exception {
         final var id = UUID.randomUUID();
         final var partner = Partner.builder()
@@ -92,7 +94,7 @@ class PartnerControllerTest {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/partners → 201 with partner id")
+    @DisplayName("Given a valid partner request, when POST /api/v1/b2b/partners is called, should return 201 with the partner id")
     void shouldCreatePartnerAndReturn201() throws Exception {
         final var id = UUID.randomUUID();
         given(createPartnerUseCase.execute(any())).willReturn(id);
@@ -106,32 +108,26 @@ class PartnerControllerTest {
                 .andExpect(jsonPath("$.id").value(id.toString()));
     }
 
-    @Test
-    @DisplayName("POST /api/v1/b2b/partners → 400 when name is blank")
-    void shouldReturn400WhenNameIsBlank() throws Exception {
+    @ParameterizedTest
+    @DisplayName("Given an invalid name, document or creditLimit, when POST /api/v1/b2b/partners is called, should return 400")
+    @CsvSource({
+            "'', 12345678901234, 5000.00",
+            "Acme, '', 5000.00",
+            "Acme, 12345678901234, -1.00",
+    })
+    void shouldReturn400WhenRequestIsInvalid(final String name, final String document, final String creditLimit)
+            throws Exception {
         mockMvc.perform(post("/api/v1/b2b/partners")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
-                                {"name":"","document":"12345678901234","creditLimit":5000.00}
-                                """))
+                                {"name":"%s","document":"%s","creditLimit":%s}
+                                """.formatted(name, document, creditLimit)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").exists());
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/partners → 400 when creditLimit is negative")
-    void shouldReturn400WhenCreditLimitIsNegative() throws Exception {
-        mockMvc.perform(post("/api/v1/b2b/partners")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("""
-                                {"name":"Acme","document":"12345678901234","creditLimit":-1.00}
-                                """))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").exists());
-    }
-
-    @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/credit-limit → 204 on success")
+    @DisplayName("Given a valid request, when PATCH /api/v1/b2b/partners/{id}/credit-limit is called, should return 204")
     void shouldAdjustCreditLimitAndReturn204() throws Exception {
         final var id = UUID.randomUUID();
         doNothing().when(adjustCreditLimitUseCase).execute(any());
@@ -145,7 +141,7 @@ class PartnerControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/credit-limit → 400 when body is invalid")
+    @DisplayName("Given an invalid body, when PATCH /api/v1/b2b/partners/{id}/credit-limit is called, should return 400")
     void shouldReturn400WhenCreditLimitBodyIsInvalid() throws Exception {
         final var id = UUID.randomUUID();
 
@@ -158,7 +154,7 @@ class PartnerControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/available-credit → 204 on success")
+    @DisplayName("Given a valid request, when PATCH /api/v1/b2b/partners/{id}/available-credit is called, should return 204")
     void shouldReplenishAvailableCreditAndReturn204() throws Exception {
         final var id = UUID.randomUUID();
         doNothing().when(replenishAvailableCreditUseCase).execute(any());
@@ -172,7 +168,7 @@ class PartnerControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/partners/{id}/available-credit → 400 when amount is null")
+    @DisplayName("Given a null amount, when PATCH /api/v1/b2b/partners/{id}/available-credit is called, should return 400")
     void shouldReturn400WhenReplenishAmountIsNull() throws Exception {
         final var id = UUID.randomUUID();
 
@@ -185,7 +181,7 @@ class PartnerControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/partners/{id}/credit → 200 with full credit data")
+    @DisplayName("Given an existing partner, when GET /api/v1/b2b/partners/{id}/credit is called, should return 200 with the full credit data")
     void shouldReturnPartnerCreditData() throws Exception {
         final var id = UUID.randomUUID();
         final var credit = new PartnerCredit(
@@ -206,7 +202,7 @@ class PartnerControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/partners/{id}/credit → 404 when partner not found")
+    @DisplayName("Given a non-existing partner, when GET /api/v1/b2b/partners/{id}/credit is called, should return 404")
     void shouldReturn404WhenPartnerNotFound() throws Exception {
         final var id = UUID.randomUUID();
         given(findPartnerCreditByIdUseCase.execute(id))

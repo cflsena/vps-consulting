@@ -33,7 +33,7 @@ class DefaultPartnerRepositoryIT {
     @Autowired private PartnerCreditJpaRepository partnerCreditJpaRepository;
 
     @Test
-    @DisplayName("Should reserve credit when free balance is sufficient")
+    @DisplayName("Given a sufficient free balance, when reserveCredit is called, should reserve the credit")
     void shouldReserveCredit_whenFreeBalanceSufficient() {
         final var partnerId = setup("1000.00", "0.00");
 
@@ -46,7 +46,7 @@ class DefaultPartnerRepositoryIT {
     }
 
     @Test
-    @DisplayName("Should reserve credit when amount exactly equals free balance")
+    @DisplayName("Given an amount that exactly equals the free balance, when reserveCredit is called, should reserve the credit")
     void shouldReserveCredit_whenAmountEqualsExactFreeBalance() {
         final var partnerId = setup("1000.00", "700.00");
 
@@ -58,7 +58,7 @@ class DefaultPartnerRepositoryIT {
     }
 
     @Test
-    @DisplayName("Should not reserve credit when free balance is insufficient")
+    @DisplayName("Given an insufficient free balance, when reserveCredit is called, should not reserve the credit")
     void shouldNotReserveCredit_whenFreeBalanceInsufficient() {
         final var partnerId = setup("1000.00", "800.00");
 
@@ -70,7 +70,7 @@ class DefaultPartnerRepositoryIT {
     }
 
     @Test
-    @DisplayName("Should not reserve credit when all balance is already reserved")
+    @DisplayName("Given all balance already reserved, when reserveCredit is called, should not reserve any more credit")
     void shouldNotReserveCredit_whenNoFreeBalance() {
         final var partnerId = setup("500.00", "500.00");
 
@@ -81,7 +81,7 @@ class DefaultPartnerRepositoryIT {
     }
 
     @Test
-    @DisplayName("Should debit reservation converting reserved balance to real debit")
+    @DisplayName("Given a reserved balance, when debitReservation is called, should convert it into a real debit")
     void shouldDebitReservation_whenCalled() {
         final var partnerId = setup("1000.00", "300.00");
 
@@ -93,7 +93,7 @@ class DefaultPartnerRepositoryIT {
     }
 
     @Test
-    @DisplayName("Should throw when debitReservation violates available_balance >= 0 constraint")
+    @DisplayName("Given an amount above the available balance, when debitReservation is called, should throw DataIntegrityViolationException")
     void shouldThrow_whenDebitReservationViolatesConstraint() {
         final var partnerId = setup("100.00", "100.00");
 
@@ -104,7 +104,7 @@ class DefaultPartnerRepositoryIT {
     // ── releaseReservation ───────────────────────────────────────────────────
 
     @Test
-    @DisplayName("Should release reservation reducing reserved balance without touching available balance")
+    @DisplayName("Given a reserved balance, when releaseReservation is called, should reduce it without touching the available balance")
     void shouldReleaseReservation_whenCalled() {
         final var partnerId = setup("1000.00", "300.00");
 
@@ -116,7 +116,7 @@ class DefaultPartnerRepositoryIT {
     }
 
     @Test
-    @DisplayName("Should throw when releaseReservation violates reserved_balance >= 0 constraint")
+    @DisplayName("Given an amount above the reserved balance, when releaseReservation is called, should throw DataIntegrityViolationException")
     void shouldThrow_whenReleaseReservationViolatesConstraint() {
         final var partnerId = setup("1000.00", "100.00");
 
@@ -127,7 +127,7 @@ class DefaultPartnerRepositoryIT {
     // ── refundCredit ─────────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("Should refund credit restoring available balance")
+    @DisplayName("Given a debited amount, when refundCredit is called, should restore the available balance")
     void shouldRefundCredit_whenCalled() {
         final var partnerId = setup("700.00", "0.00");
 
@@ -141,7 +141,7 @@ class DefaultPartnerRepositoryIT {
     // ── Ciclos completos ──────────────────────────────────────────────────────
 
     @Test
-    @DisplayName("Should complete create-to-approve cycle: reserve then debit leaves net credit consumed")
+    @DisplayName("Given a reserve followed by a debit, when the create-to-approve cycle completes, should leave the net credit consumed")
     void shouldCompleteCycle_createThenApprove() {
         final var partnerId = setup("1000.00", "0.00");
         final var pid = PartnerId.from(partnerId);
@@ -155,7 +155,7 @@ class DefaultPartnerRepositoryIT {
     }
 
     @Test
-    @DisplayName("Should complete create-to-cancel-pending cycle: reserve then release leaves balance unchanged")
+    @DisplayName("Given a reserve followed by a release, when the create-to-cancel-pending cycle completes, should leave the balance unchanged")
     void shouldCompleteCycle_createThenCancelPending() {
         final var partnerId = setup("1000.00", "0.00");
         final var pid = PartnerId.from(partnerId);
@@ -169,7 +169,7 @@ class DefaultPartnerRepositoryIT {
     }
 
     @Test
-    @DisplayName("Should complete create-to-approve-to-cancel cycle: reserve, debit, refund leaves balance unchanged")
+    @DisplayName("Given a reserve, debit and refund, when the create-to-approve-to-cancel cycle completes, should leave the balance unchanged")
     void shouldCompleteCycle_createApproveCancel() {
         final var partnerId = setup("1000.00", "0.00");
         final var pid = PartnerId.from(partnerId);

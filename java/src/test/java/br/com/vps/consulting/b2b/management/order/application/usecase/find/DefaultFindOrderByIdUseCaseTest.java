@@ -32,7 +32,7 @@ class DefaultFindOrderByIdUseCaseTest {
     @InjectMocks private DefaultFindOrderByIdUseCase useCase;
 
     @Test
-    @DisplayName("Should return OrderOutput with correct fields mapped from found order")
+    @DisplayName("Given an existing order, when execute is called, should return an OrderOutput with the fields correctly mapped")
     void shouldReturnMappedOrderOutput() {
         final var orderId = UUID.randomUUID();
         final var partnerId = UUID.randomUUID();
@@ -48,7 +48,7 @@ class DefaultFindOrderByIdUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should throw OrderNotFoundException when order does not exist")
+    @DisplayName("Given a non-existing order, when execute is called, should throw OrderNotFoundException")
     void shouldThrowWhenOrderNotFound() {
         final var orderId = UUID.randomUUID();
         when(orderRepository.findById(OrderId.from(orderId))).thenReturn(Optional.empty());

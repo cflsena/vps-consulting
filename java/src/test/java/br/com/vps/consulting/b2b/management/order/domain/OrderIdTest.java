@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class OrderIdTest {
 
     @Test
-    @DisplayName("Should generate unique OrderId")
+    @DisplayName("Given multiple calls, when generate is called, should return unique OrderId values")
     void shouldGenerateUniqueOrderId() {
         final var id1 = OrderId.generate();
         final var id2 = OrderId.generate();
@@ -21,7 +21,7 @@ class OrderIdTest {
     }
 
     @Test
-    @DisplayName("Should create OrderId from UUID")
+    @DisplayName("Given a UUID, when from is called, should create an OrderId wrapping it")
     void shouldCreateFromUuid() {
         final var uuid = UUID.randomUUID();
         final var id = OrderId.from(uuid);
@@ -29,7 +29,7 @@ class OrderIdTest {
     }
 
     @Test
-    @DisplayName("Should create OrderId from String")
+    @DisplayName("Given a UUID string, when from is called, should create an OrderId wrapping the parsed UUID")
     void shouldCreateFromString() {
         final var uuid = UUID.randomUUID();
         final var id = OrderId.from(uuid.toString());
@@ -37,20 +37,20 @@ class OrderIdTest {
     }
 
     @Test
-    @DisplayName("Should reject null UUID value")
+    @DisplayName("Given a null UUID value, when constructing OrderId, should reject it with NullPointerException")
     void shouldRejectNullValue() {
         assertThrows(NullPointerException.class, () -> new OrderId(null));
     }
 
     @Test
-    @DisplayName("Should reject malformed UUID string")
+    @DisplayName("Given a malformed UUID string, when from is called, should throw IllegalArgumentException")
     void shouldRejectMalformedUuidString() {
         assertThatThrownBy(() -> OrderId.from("not-a-uuid"))
                 .isInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
-    @DisplayName("Should be equal when wrapping the same UUID")
+    @DisplayName("Given two OrderId wrapping the same UUID, when compared, should be equal")
     void shouldBeEqualForSameUuid() {
         final var uuid = UUID.randomUUID();
         assertThat(OrderId.from(uuid)).isEqualTo(OrderId.from(uuid));

@@ -60,7 +60,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/orders → 201 cria pedido e reserva crédito")
+    @DisplayName("Given a valid order request, when POST /api/v1/b2b/orders is called, should return 201 and reserve credit")
     void shouldCreateOrderAndReturn201WithCreditReserved() throws Exception {
         final var partnerId = createPartner("1000.00");
 
@@ -82,7 +82,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/orders → 400 quando items está vazio")
+    @DisplayName("Given an empty items list, when POST /api/v1/b2b/orders is called, should return 400")
     void shouldReturn400WhenItemsIsEmpty() throws Exception {
         final var partnerId = createPartner("1000.00");
 
@@ -96,7 +96,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/orders → 400 quando partnerId é nulo")
+    @DisplayName("Given a null partnerId, when POST /api/v1/b2b/orders is called, should return 400")
     void shouldReturn400WhenPartnerIdIsNull() throws Exception {
         mockMvc.perform(post("/api/v1/b2b/orders")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +108,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/orders → 404 quando parceiro não existe")
+    @DisplayName("Given a non-existing partner, when POST /api/v1/b2b/orders is called, should return 404")
     void shouldReturn404WhenPartnerNotFound() throws Exception {
         mockMvc.perform(post("/api/v1/b2b/orders")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -120,7 +120,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("POST /api/v1/b2b/orders → 422 quando crédito insuficiente")
+    @DisplayName("Given insufficient credit, when POST /api/v1/b2b/orders is called, should return 422")
     void shouldReturn422WhenInsufficientCredit() throws Exception {
         final var partnerId = createPartner("100.00");
 
@@ -134,7 +134,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders → 200 com estrutura de paginação")
+    @DisplayName("Given a request, when GET /api/v1/b2b/orders is called, should return 200 with the pagination structure")
     void shouldListOrdersAndReturn200() throws Exception {
         mockMvc.perform(get("/api/v1/b2b/orders"))
                 .andExpect(status().isOk())
@@ -145,7 +145,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders?status=PENDING → retorna apenas pedidos com status PENDING")
+    @DisplayName("Given a status=PENDING filter, when GET /api/v1/b2b/orders is called, should return only PENDING orders")
     void shouldListOrdersFilteredByStatus() throws Exception {
         final var partnerId = createPartner("1000.00");
         final var orderId = createOrder(partnerId, "50.00");
@@ -157,7 +157,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders?partnerId={id} → retorna pedidos do parceiro")
+    @DisplayName("Given a partnerId filter, when GET /api/v1/b2b/orders is called, should return the partner's orders")
     void shouldListOrdersFilteredByPartnerId() throws Exception {
         final var partnerId = createPartner("1000.00");
         final var orderId = createOrder(partnerId, "50.00");
@@ -169,7 +169,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders?from=today&to=today → retorna pedido criado hoje")
+    @DisplayName("Given a from/to filter set to today, when GET /api/v1/b2b/orders is called, should return the order created today")
     void shouldListOrdersFilteredByDateRange() throws Exception {
         final var partnerId = createPartner("1000.00");
         final var orderId = createOrder(partnerId, "50.00");
@@ -181,7 +181,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders/{id} → 200 com todos os campos do pedido")
+    @DisplayName("Given an existing order, when GET /api/v1/b2b/orders/{id} is called, should return 200 with all order fields")
     void shouldFindOrderByIdAndReturn200() throws Exception {
         final var partnerId = createPartner("1000.00");
         final var orderId = createOrder(partnerId, "75.00");
@@ -197,7 +197,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders/{id} → 404 quando pedido não existe")
+    @DisplayName("Given a non-existing order, when GET /api/v1/b2b/orders/{id} is called, should return 404")
     void shouldReturn404WhenOrderNotFound() throws Exception {
         mockMvc.perform(get("/api/v1/b2b/orders/{id}", UUID.randomUUID()))
                 .andExpect(status().isNotFound())
@@ -205,7 +205,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("GET /api/v1/b2b/orders/{id}/items → 200 com itens do pedido")
+    @DisplayName("Given an existing order, when GET /api/v1/b2b/orders/{id}/items is called, should return 200 with the order items")
     void shouldListOrderItemsAndReturn200() throws Exception {
         final var partnerId = createPartner("1000.00");
         final var orderId = createOrder(partnerId, "100.00");
@@ -218,7 +218,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/orders/{id}/status → 204 em transição válida PENDING→APPROVED")
+    @DisplayName("Given a PENDING order, when PATCH /api/v1/b2b/orders/{id}/status to APPROVED is called, should return 204")
     void shouldUpdateOrderStatusToApprovedAndReturn204() throws Exception {
         var partnerId = createPartner("1000.00");
         var orderId = createOrder(partnerId, "100.00");
@@ -234,7 +234,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/orders/{id}/status → 422 em transição inválida")
+    @DisplayName("Given an invalid status transition, when PATCH /api/v1/b2b/orders/{id}/status is called, should return 422")
     void shouldReturn422OnInvalidStatusTransition() throws Exception {
         final var partnerId = createPartner("1000.00");
         final var orderId = createOrder(partnerId, "100.00");
@@ -249,7 +249,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("PATCH /api/v1/b2b/orders/{id}/status → 404 quando pedido não existe")
+    @DisplayName("Given a non-existing order, when PATCH /api/v1/b2b/orders/{id}/status is called, should return 404")
     void shouldReturn404WhenOrderNotFoundForStatusUpdate() throws Exception {
         mockMvc.perform(patch("/api/v1/b2b/orders/{id}/status", UUID.randomUUID())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -262,7 +262,7 @@ class OrderControllerIT {
 
 
     @Test
-    @DisplayName("E2E: PENDING→APPROVED→IN_PROCESS→SENT→DELIVERED debita crédito corretamente")
+    @DisplayName("Given an order going through PENDING→APPROVED→IN_PROCESS→SENT→DELIVERED, when each transition is applied, should debit credit correctly")
     void e2eFullLifecycleDebitsCredit() throws Exception {
         var partnerId = createPartner("1000.00");
         var orderId = createOrder(partnerId, "200.00");
@@ -285,7 +285,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("E2E: PENDING→CANCELED libera crédito reservado")
+    @DisplayName("Given a PENDING order, when transitioned to CANCELED, should release the reserved credit")
     void e2ePendingCancelReleasesCredit() throws Exception {
         final var partnerId = createPartner("1000.00");
         final var orderId = createOrder(partnerId, "300.00");
@@ -301,7 +301,7 @@ class OrderControllerIT {
     }
 
     @Test
-    @DisplayName("E2E: PENDING→APPROVED→CANCELED reembolsa crédito debitado")
+    @DisplayName("Given an APPROVED order, when transitioned to CANCELED, should refund the debited credit")
     void e2eApprovedCancelRefundsCredit() throws Exception {
         final var partnerId = createPartner("1000.00");
         final var orderId = createOrder(partnerId, "500.00");

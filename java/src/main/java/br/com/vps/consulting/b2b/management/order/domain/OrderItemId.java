@@ -8,7 +8,7 @@ import java.util.UUID;
 public record OrderItemId(UUID value) implements Identifier<UUID> {
 
     public OrderItemId {
-        Objects.requireNonNull(value, "OrderItemId value is required");
+        Objects.requireNonNull(value, "OrderItemId value é obrigatório");
     }
 
     public static OrderItemId generate() {

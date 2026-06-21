@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 class MoneyTest {
 
     @Test
-    @DisplayName("Should create Money with explicit value and currency")
+    @DisplayName("Given an explicit value and currency, when constructing Money, should create it with those fields")
     void shouldCreateWithAmountAndCurrency() {
         final var money = new Money(new BigDecimal("100.00"), "USD");
         assertThat(money.value()).isEqualByComparingTo("100.00");
@@ -20,7 +20,7 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should create Money with default BRL currency via of(BigDecimal)")
+    @DisplayName("Given a BigDecimal, when of(BigDecimal) is called, should create Money with the default BRL currency")
     void shouldCreateWithDefaultCurrencyFromBigDecimal() {
         final var money = Money.of(new BigDecimal("50.00"));
         assertThat(money.currency()).isEqualTo(Money.DEFAULT_CURRENCY);
@@ -28,7 +28,7 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should create Money with default BRL currency via of(String)")
+    @DisplayName("Given a String value, when of(String) is called, should create Money with the default BRL currency")
     void shouldCreateWithDefaultCurrencyFromString() {
         final var money = Money.of("75.50");
         assertThat(money.currency()).isEqualTo(Money.DEFAULT_CURRENCY);
@@ -36,26 +36,26 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should allow zero value")
+    @DisplayName("Given a zero value, when constructing Money, should allow it")
     void shouldAllowZeroAmount() {
         final var money = new Money(BigDecimal.ZERO, "BRL");
         assertThat(money.isZero()).isTrue();
     }
 
     @Test
-    @DisplayName("Should reject null value")
+    @DisplayName("Given a null value, when constructing Money, should reject it with NullPointerException")
     void shouldRejectNullAmount() {
         assertThrows(NullPointerException.class, () -> new Money(null, "BRL"));
     }
 
     @Test
-    @DisplayName("Should reject null currency")
+    @DisplayName("Given a null currency, when constructing Money, should reject it with NullPointerException")
     void shouldRejectNullCurrency() {
         assertThrows(NullPointerException.class, () -> new Money(new BigDecimal("10.00"), null));
     }
 
     @Test
-    @DisplayName("Should reject negative value")
+    @DisplayName("Given a negative value, when constructing Money, should throw IllegalArgumentException")
     void shouldRejectNegativeAmount() {
         assertThatThrownBy(() -> new Money(new BigDecimal("-0.01"), "BRL"))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -63,7 +63,7 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should add two Money values with same currency")
+    @DisplayName("Given two Money values with the same currency, when add is called, should sum their values")
     void shouldAddTwoMoneyWithSameCurrency() {
         final var a = new Money(new BigDecimal("30.00"), "BRL");
         final var b = new Money(new BigDecimal("20.00"), "BRL");
@@ -73,7 +73,7 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should reject addition of Money with different currencies")
+    @DisplayName("Given two Money values with different currencies, when add is called, should throw IllegalArgumentException")
     void shouldRejectAdditionWithDifferentCurrencies() {
         final var brl = new Money(new BigDecimal("10.00"), "BRL");
         final var usd = new Money(new BigDecimal("10.00"), "USD");
@@ -83,7 +83,7 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should multiply Money by positive quantity")
+    @DisplayName("Given a positive quantity, when multiply is called, should multiply the Money value by it")
     void shouldMultiplyByPositiveQuantity() {
         final var price = new Money(new BigDecimal("15.00"), "BRL");
         final var result = price.multiply(3);
@@ -92,7 +92,7 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should return zero when multiplying by zero")
+    @DisplayName("Given a zero quantity, when multiply is called, should return zero")
     void shouldReturnZeroWhenMultiplyingByZero() {
         final var price = new Money(new BigDecimal("20.00"), "BRL");
         final var result = price.multiply(0);
@@ -100,7 +100,7 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should reject negative quantity in multiply")
+    @DisplayName("Given a negative quantity, when multiply is called, should throw IllegalArgumentException")
     void shouldRejectNegativeQuantityInMultiply() {
         final var price = new Money(new BigDecimal("10.00"), "BRL");
         assertThatThrownBy(() -> price.multiply(-1))
@@ -109,7 +109,7 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should return true when value is greater than other")
+    @DisplayName("Given a larger value, when isGreaterThan is called, should return true")
     void shouldReturnTrueWhenIsGreaterThan() {
         final var larger = new Money(new BigDecimal("100.00"), "BRL");
         final var smaller = new Money(new BigDecimal("50.00"), "BRL");
@@ -117,7 +117,7 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should return false when value is not greater than other")
+    @DisplayName("Given an equal value, when isGreaterThan is called, should return false")
     void shouldReturnFalseWhenNotGreaterThan() {
         final var a = new Money(new BigDecimal("50.00"), "BRL");
         final var b = new Money(new BigDecimal("50.00"), "BRL");
@@ -125,7 +125,7 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should reject isGreaterThan comparison with different currency")
+    @DisplayName("Given values with different currencies, when isGreaterThan is called, should throw IllegalArgumentException")
     void shouldRejectIsGreaterThanWithDifferentCurrency() {
         var brl = new Money(new BigDecimal("100.00"), "BRL");
         var usd = new Money(new BigDecimal("50.00"), "USD");
@@ -135,14 +135,14 @@ class MoneyTest {
     }
 
     @Test
-    @DisplayName("Should return true for isZero when value is zero")
+    @DisplayName("Given a zero value, when isZero is called, should return true")
     void shouldReturnTrueForIsZero() {
         var money = new Money(BigDecimal.ZERO, "BRL");
         assertThat(money.isZero()).isTrue();
     }
 
     @Test
-    @DisplayName("Should return false for isZero when value is positive")
+    @DisplayName("Given a positive value, when isZero is called, should return false")
     void shouldReturnFalseForIsZeroWhenPositive() {
         var money = new Money(new BigDecimal("0.01"), "BRL");
         assertThat(money.isZero()).isFalse();

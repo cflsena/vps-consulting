@@ -31,7 +31,7 @@ class DefaultReplenishAvailableCreditUseCaseTest {
 
     // creditLimit=15000, availableBalance=7500 → maxReplenishment=7500
     @Test
-    @DisplayName("Should replenish available credit")
+    @DisplayName("Given a valid amount, when execute is called, should replenish the available credit")
     void shouldReplenishAvailableCredit() {
         final var partnerId = UUID.randomUUID();
 
@@ -45,7 +45,7 @@ class DefaultReplenishAvailableCreditUseCaseTest {
 
     // creditLimit=15000, availableBalance=0 → maxReplenishment=15000
     @Test
-    @DisplayName("Should allow replenishment exactly at the maximum limit")
+    @DisplayName("Given an amount exactly at the maximum limit, when execute is called, should allow the replenishment")
     void shouldAllowReplenishmentAtExactMaximum() {
         final var partnerId = UUID.randomUUID();
         when(partnerRepository.findCreditById(PartnerId.from(partnerId)))
@@ -58,7 +58,7 @@ class DefaultReplenishAvailableCreditUseCaseTest {
 
     // creditLimit=15000, availableBalance=7500 → maxReplenishment=7500
     @Test
-    @DisplayName("Should throw InvalidCreditReplenishmentException when amount exceeds maximum")
+    @DisplayName("Given an amount that exceeds the maximum, when execute is called, should throw InvalidCreditReplenishmentException")
     void shouldThrowWhenAmountExceedsMaximum() {
         final var partnerId = UUID.randomUUID();
 
@@ -72,7 +72,7 @@ class DefaultReplenishAvailableCreditUseCaseTest {
     }
 
     @Test
-    @DisplayName("Should throw PartnerNotFoundException when partner does not exist")
+    @DisplayName("Given a non-existing partner, when execute is called, should throw PartnerNotFoundException")
     void shouldThrowWhenPartnerNotFound() {
         final var partnerId = UUID.randomUUID();
         when(partnerRepository.findCreditById(any())).thenReturn(Optional.empty());
