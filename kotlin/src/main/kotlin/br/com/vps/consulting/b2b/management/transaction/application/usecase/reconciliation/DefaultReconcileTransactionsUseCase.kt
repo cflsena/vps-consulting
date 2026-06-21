@@ -24,7 +24,7 @@ class DefaultReconcileTransactionsUseCase(
     override fun execute() {
 
         val pendingTransactions = transactionRepository.findPending(limit = 100)
-        log.info("Reconciliação: ${pendingTransactions.size} transações pendentes encontradas")
+        log.info("Reconciliation: ${pendingTransactions.size} pending transactions found")
 
         val reconciledTransactions = pendingTransactions.mapNotNull { transaction ->
             handlersByType[transaction.type]?.let { strategy ->
@@ -48,7 +48,7 @@ class DefaultReconcileTransactionsUseCase(
         }
 
         log.info(
-            "Reconciliação: ${reconciledTransactions.size} transações reconciliadas"
+            "Reconciliation: ${reconciledTransactions.size} transactions reconciled"
         )
 
     }
@@ -60,12 +60,12 @@ class DefaultReconcileTransactionsUseCase(
             } else {
                 transaction.fail("Operação de saldo não confirmada")
             }
-            log.info("Transação ${transaction.id.value} reconciliada com status ${transaction.status}")
+            log.info("Transaction ${transaction.id.value} reconciled with status ${transaction.status}")
         } catch (e: BaseException) {
-            log.warn("Falha de negócio ao reconciliar transação ${transaction.id.value}: ${e.message}")
+            log.warn("Business failure while reconciling transaction ${transaction.id.value}: ${e.message}")
             transaction.fail(e.message)
         } catch (e: Exception) {
-            log.warn("Falha inesperada ao reconciliar transação ${transaction.id.value}", e)
+            log.warn("Unexpected failure while reconciling transaction ${transaction.id.value}", e)
         }
     }
 

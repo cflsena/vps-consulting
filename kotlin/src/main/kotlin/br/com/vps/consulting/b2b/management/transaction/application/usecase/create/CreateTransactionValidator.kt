@@ -15,7 +15,7 @@ class CreateTransactionValidator(
     private val partnerService: PartnerService,
     private val transactionRepository: TransactionRepository,
 ) {
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     fun validate(input: CreateTransactionInput) {
 
@@ -24,17 +24,17 @@ class CreateTransactionValidator(
         }
 
         transactionRepository.findByIdempotencyKey(input.idempotencyKey)?.let {
-            logger.error("Transação já processada para a chave de idempotência ${input.idempotencyKey}")
+            log.error("Transação já processada para a chave de idempotência ${input.idempotencyKey}")
             throw DuplicateTransactionException(input.idempotencyKey)
         }
 
         if (input.amount <= BigDecimal.ZERO) {
-            logger.error("Valor da transação inválido para o parceiro ${input.partnerId}: ${input.amount}")
+            log.error("Valor da transação inválido para o parceiro ${input.partnerId}: ${input.amount}")
             throw InvalidTransactionAmountException("O valor deve ser positivo")
         }
 
         partnerService.existsById(input.partnerId).takeIf { it } ?: run {
-            logger.error("Parceiro ${input.partnerId} não encontrado ao processar transação")
+            log.error("Parceiro ${input.partnerId} não encontrado ao processar transação")
             throw TransactionPartnerNotFoundException(input.partnerId)
         }
 

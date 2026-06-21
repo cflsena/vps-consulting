@@ -10,17 +10,17 @@ import org.slf4j.LoggerFactory
 class ListTransactionHistoryValidator(
     private val partnerService: PartnerService,
 ) {
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     fun validate(input: ListTransactionHistoryInput) {
 
         partnerService.existsById(input.partnerId).takeIf { it } ?: run {
-            logger.error("Parceiro ${input.partnerId} não encontrado ao processar transação")
+            log.error("Parceiro ${input.partnerId} não encontrado ao processar transação")
             throw TransactionPartnerNotFoundException(input.partnerId)
         }
 
         if (input.from != null && input.to != null && input.from.isAfter(input.to)) {
-            logger.error("Intervalo de datas inválido: de ${input.from} é posterior a até ${input.to}")
+            log.error("Intervalo de datas inválido: de ${input.from} é posterior a até ${input.to}")
             throw DomainException("A data inicial não pode ser posterior à data final")
         }
 

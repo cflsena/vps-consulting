@@ -20,13 +20,13 @@ class DefaultCreateTransactionUseCase(
     handlers: List<TransactionHandler>
 ) : CreateTransactionUseCase {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
     private val handlersByType = handlers.associateBy { it.type }
 
     @Transactional
     override fun execute(input: CreateTransactionInput): CreateTransactionOutput {
 
-        logger.info("Iniciando criação da transação, detalhes: $input")
+        log.info("Iniciando criação da transação, detalhes: $input")
 
         validator.validate(input)
 
@@ -59,7 +59,7 @@ class DefaultCreateTransactionUseCase(
             status = transactionSaved.status,
             errorDescription = transactionSaved.errorDescription,
         ).also {
-        logger.info("Transação ${transactionSaved.id.value} processada com status ${transactionSaved.status} para o parceiro ${input.partnerId}")
+        log.info("Transação ${transactionSaved.id.value} processada com status ${transactionSaved.status} para o parceiro ${input.partnerId}")
         }
 
     }
@@ -76,10 +76,10 @@ class DefaultCreateTransactionUseCase(
                 transaction.fail("Operação de saldo não confirmada")
             }
         } catch (e: BaseException) {
-            logger.warn("Falha de negócio ao processar a transação ${transaction.id.value}: ${e.message}")
+            log.warn("Falha de negócio ao processar a transação ${transaction.id.value}: ${e.message}")
             transaction.fail(e.message)
         } catch (e: Exception) {
-            logger.warn("Falha inesperada ao processar a transação ${transaction.id.value}", e)
+            log.warn("Falha inesperada ao processar a transação ${transaction.id.value}", e)
         }
 
     }

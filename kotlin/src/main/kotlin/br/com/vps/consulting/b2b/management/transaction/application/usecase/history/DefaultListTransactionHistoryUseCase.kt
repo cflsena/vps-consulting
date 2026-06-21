@@ -11,11 +11,11 @@ class DefaultListTransactionHistoryUseCase(
     private val transactionRepository: TransactionRepository,
 ) : ListTransactionHistoryUseCase {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     override fun execute(input: ListTransactionHistoryInput): PageCustom<ListTransactionHistoryOutput> {
 
-        logger.info(
+        log.info(
             "Consultando histórico de transações [parceiro=${input.partnerId}, de=${input.from}, " +
                 "até=${input.to}, tipo=${input.type}, pagina=${input.pageNumber}, tamanho=${input.pageSize}]"
         )
@@ -32,7 +32,7 @@ class DefaultListTransactionHistoryUseCase(
         )
 
         return ListTransactionHistoryOutput.from(page).also {
-            logger.info(
+            log.info(
                 "Histórico de transações [parceiro=${input.partnerId}, de=${input.from}, " +
                     "até=${input.to}, tipo=${input.type}, pagina=${input.pageNumber}, " +
                     "tamanho=${input.pageSize}] consultado com sucesso"

@@ -11,12 +11,12 @@ import org.springframework.stereotype.Component
 class ReconciliationScheduler(
     private val reconcileTransactionsUseCase: ReconcileTransactionsUseCase,
 ) {
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     @Scheduled(fixedDelayString = "\${scheduling.reconciliation.fixed-delay-ms:60000}")
     fun reconcile() {
-        logger.info("Iniciando job agendado de reconciliação de transações pendentes")
+        log.info("Iniciando job agendado de reconciliação de transações pendentes")
         reconcileTransactionsUseCase.execute()
-        logger.info("Job agendado de reconciliação de transações pendentes finalizado")
+        log.info("Job agendado de reconciliação de transações pendentes finalizado")
     }
 }

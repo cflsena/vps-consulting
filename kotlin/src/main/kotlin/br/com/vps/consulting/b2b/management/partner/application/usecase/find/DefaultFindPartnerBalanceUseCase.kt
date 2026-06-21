@@ -15,10 +15,10 @@ class DefaultFindPartnerBalanceUseCase(
 
     override fun execute(input: FindPartnerBalanceInput): FindPartnerBalanceOutput {
         val partnerId = PartnerId.from(input.partnerId)
-        log.info("Consultando saldo do parceiro ${input.partnerId}")
+        log.info("Querying balance for partner ${input.partnerId}")
         val partnerBalance = partnerBalanceRepository.findBalanceById(partnerId)
             ?: run {
-                log.error("Saldo não encontrado para o parceiro ${partnerId.value}")
+                log.error("Balance not found for partner ${partnerId.value}")
                 throw PartnerNotFoundException(partnerId)
             }
         return FindPartnerBalanceOutput.from(partnerBalance)

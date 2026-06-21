@@ -15,10 +15,10 @@ class DebitTransactionHandler(
     override val type: TransactionType = TransactionType.DEBIT,
 ) : TransactionHandler {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     override fun successfullyProcessed(transaction: Transaction): Boolean {
-        logger.info("Iniciando reconciliação de débito. Transação: [id=${transaction.id}, amount=${transaction.amount}]")
+        log.info("Iniciando reconciliação de débito. Transação: [id=${transaction.id}, amount=${transaction.amount}]")
         validate(transaction)
         return partnerService.debitBalance(transaction.partnerId, transaction.amount)
     }
@@ -29,14 +29,14 @@ class DebitTransactionHandler(
         val amount = transaction.amount
 
         if (amount.value <= BigDecimal.ZERO) {
-            logger.error("Valor de débito inválido para o parceiro $partnerId: $amount")
+            log.error("Valor de débito inválido para o parceiro $partnerId: $amount")
             throw InvalidDebitAmountException("Valor de débito inválido. O valor deve ser positivo")
         }
 
         val availableBalance = partnerService.findBalanceById(partnerId)
 
         if (amount.isGreaterThan(availableBalance)) {
-            logger.error(
+            log.error(
                 "Saldo insuficiente para o parceiro $partnerId: solicitado $amount, disponível ${availableBalance.value}"
             )
             throw InsufficientBalanceException(partnerId, amount, availableBalance)

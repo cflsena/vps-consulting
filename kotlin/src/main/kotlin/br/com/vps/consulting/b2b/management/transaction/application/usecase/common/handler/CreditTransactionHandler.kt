@@ -14,17 +14,17 @@ class CreditTransactionHandler(
     override val type: TransactionType = TransactionType.CREDIT,
 ) : TransactionHandler {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
+    private val log = LoggerFactory.getLogger(javaClass)
 
     override fun successfullyProcessed(transaction: Transaction): Boolean {
-        logger.info("Iniciando reconciliação de crédito. Transação: [id=${transaction.id}, amount=${transaction.amount}]")
+        log.info("Iniciando reconciliação de crédito. Transação: [id=${transaction.id}, amount=${transaction.amount}]")
         validate(transaction)
         return partnerService.creditBalance(transaction.partnerId, transaction.amount)
     }
 
     private fun validate(transaction: Transaction) {
         if (transaction.amount.value <= BigDecimal.ZERO) {
-            logger.error("Valor de crédito inválido para o parceiro ${transaction.partnerId}: ${transaction.amount}")
+            log.error("Valor de crédito inválido para o parceiro ${transaction.partnerId}: ${transaction.amount}")
             throw InvalidCreditAmountException("Valor de crédito inválido. O valor deve ser positivo.")
         }
     }
