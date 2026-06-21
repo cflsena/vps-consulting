@@ -30,18 +30,19 @@ public record Money(BigDecimal value, String currency) implements ValueObject {
 
     public Money add(final Money other) {
         assertSameCurrency(other);
-        return new Money(this.value.add(other.value), this.currency);
+        return new Money(this.value.add(other.value).setScale(2, RoundingMode.HALF_EVEN), this.currency);
     }
 
     public Money subtract(final Money other) {
-        return null;
+        assertSameCurrency(other);
+        return new Money(this.value.subtract(other.value).setScale(2, RoundingMode.HALF_EVEN), this.currency);
     }
 
     public Money multiply(final int quantity) {
         if (quantity < 0) {
             throw new IllegalArgumentException("Quantity cannot be negative: " + quantity);
         }
-        return new Money(this.value.multiply(BigDecimal.valueOf(quantity)), this.currency);
+        return new Money(this.value.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_EVEN), this.currency);
     }
 
     public boolean isGreaterThan(final Money other) {
@@ -50,7 +51,8 @@ public record Money(BigDecimal value, String currency) implements ValueObject {
     }
 
     public boolean isLessThan(final Money other) {
-        return false;
+        assertSameCurrency(other);
+        return this.value.compareTo(other.value) < 0;
     }
 
     public boolean isZero() {

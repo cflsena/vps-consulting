@@ -43,6 +43,7 @@ public class DefaultCreatePartnerUseCase implements CreatePartnerUseCase {
                 PartnerCredit.builder()
                         .id(partnerId.value())
                         .creditLimit(input.creditLimit())
+                        .availableBalance(input.creditLimit())
                         .build()
         );
     }
