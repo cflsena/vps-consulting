@@ -88,11 +88,11 @@ public interface OrderApi extends ApiBaseDocumentation {
     @ApiResponse(responseCode = "400", description = "Parâmetros de filtro inválidos (ex: data inicial posterior à data final)")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     ResponseEntity<PageResponseDTO<OrderListOutput>> listOrders(
-            @Parameter(description = "Data inicial do filtro no fuso horário de Brasília (GMT-3). Formato: yyyy-MM-dd")
+            @Parameter(description = "Data inicial do filtro. Formato: yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
-            @Parameter(description = "Data final do filtro no fuso horário de Brasília (GMT-3). Formato: yyyy-MM-dd")
+            @Parameter(description = "Data final do filtro. Formato: yyyy-MM-dd")
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate to,
-            @Parameter(description = "Filtro por status do pedido. Valores válidos: PENDING, APPROVED, IN_PROCESS, SENT, DELIVERED, CANCELED")
+            @Parameter(description = "Filtro por status do pedido.")
             @RequestParam(required = false) OrderStatus status,
             @Parameter(description = "Filtro pelo ID do parceiro vinculado ao pedido")
             @RequestParam(required = false) UUID partnerId,
