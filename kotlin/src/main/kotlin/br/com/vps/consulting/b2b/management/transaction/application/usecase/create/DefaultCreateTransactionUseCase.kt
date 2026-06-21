@@ -59,7 +59,7 @@ class DefaultCreateTransactionUseCase(
             status = transactionSaved.status,
             errorDescription = transactionSaved.errorDescription,
         ).also {
-            logger.info("Transação ${transactionSaved.id.value} processada com status ${transactionSaved.status} para o parceiro ${input.partnerId}")
+        logger.info("Transação ${transactionSaved.id.value} processada com status ${transactionSaved.status} para o parceiro ${input.partnerId}")
         }
 
     }
