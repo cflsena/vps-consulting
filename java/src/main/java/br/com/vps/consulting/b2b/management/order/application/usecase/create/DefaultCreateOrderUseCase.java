@@ -3,6 +3,7 @@ package br.com.vps.consulting.b2b.management.order.application.usecase.create;
 import br.com.vps.consulting.b2b.management.order.application.service.PartnerCreditService;
 import br.com.vps.consulting.b2b.management.order.domain.Order;
 import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
+import br.com.vps.consulting.b2b.management.order.domain.OrderItemRepository;
 import br.com.vps.consulting.b2b.management.order.domain.OrderRepository;
 import br.com.vps.consulting.b2b.management.order.domain.event.OrderCreated;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class DefaultCreateOrderUseCase implements CreateOrderUseCase {
 
     private final OrderRepository orderRepository;
+    private final OrderItemRepository orderItemRepository;
     private final PartnerCreditService partnerCreditService;
     private final EventPublisher eventPublisher;
 
@@ -29,36 +31,37 @@ public class DefaultCreateOrderUseCase implements CreateOrderUseCase {
     @Transactional
     public UUID execute(final CreateOrderInput input) {
 
-        final var partnerId = PartnerId.from(input.partnerId());
-        final var items = buildItems(input.items());
+        final var itemsToCreate = buildItems(input);
         final var order = Order.createPending()
-                .partnerId(partnerId)
-                .items(items)
+                .partnerId(input.partnerId())
+                .items(itemsToCreate)
                 .build();
 
         log.info("Creating order [partnerId={}, itemCount={}, totalAmount={}]",
-                input.partnerId(), items.size(), order.getTotalAmount().value());
+                input.partnerId(), input.items().size(), order.getTotalAmount().value());
 
         partnerCreditService.reserveCredit(input.partnerId(), order.getTotalAmount().value());
 
-        final var saved = orderRepository.save(order);
+        final var orderCreated = orderRepository.save(order);
+        orderItemRepository.saveAll(orderCreated.getId().value(), itemsToCreate);
 
         log.info("Order created successfully [orderId={}, partnerId={}, totalAmount={}]",
-                saved.getId().value(), saved.getPartnerId().value(), saved.getTotalAmount().value());
+                orderCreated.getId().value(), orderCreated.getPartnerId(), orderCreated.getTotalAmount().value());
 
         eventPublisher.publish(OrderCreated.of(
-                saved.getId().value(),
-                saved.getPartnerId().value(),
-                saved.getTotalAmount().value(),
-                saved.getTotalAmount().currency()
+                orderCreated.getId().value(),
+                orderCreated.getPartnerId(),
+                orderCreated.getTotalAmount().value(),
+                orderCreated.getTotalAmount().currency()
         ));
 
-        return saved.getId().value();
+        return orderCreated.getId().value();
 
     }
 
-    private List<OrderItem> buildItems(final List<CreateOrderInput.Item> items) {
-        return items.stream()
+    private List<OrderItem> buildItems(final CreateOrderInput input) {
+        CreateOrderItemValidator.validate(input.items());
+        return input.items().stream()
                 .map(item -> OrderItem.builder()
                         .productId(item.productId())
                         .quantity(item.quantity())

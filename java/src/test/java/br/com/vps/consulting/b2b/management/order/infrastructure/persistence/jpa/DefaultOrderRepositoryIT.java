@@ -5,6 +5,7 @@ import br.com.vps.consulting.b2b.management.order.domain.Order;
 import br.com.vps.consulting.b2b.management.order.domain.OrderId;
 import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
 import br.com.vps.consulting.b2b.management.order.domain.OrderStatus;
+import br.com.vps.consulting.b2b.management.order.domain.projection.OrderProjection;
 import br.com.vps.consulting.b2b.management.order.infrastructure.persistence.DefaultOrderRepository;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerEntity;
@@ -55,7 +56,7 @@ class DefaultOrderRepositoryIT {
     }
 
     @Test
-    @DisplayName("Given a pending order, when save is called, should persist the order and its items")
+    @DisplayName("Given a pending order, when save is called, should persist the order")
     void shouldSaveOrder_andPersistItems() {
         final var partnerId = createPartner();
         final var order = newPendingOrder(partnerId, "PROD-1", "50.00");
@@ -66,9 +67,7 @@ class DefaultOrderRepositoryIT {
         final var savedEntity = orderJpaRepository.findById(order.getId().value()).orElseThrow();
         assertThat(savedEntity.getPartnerId()).isEqualTo(partnerId);
         assertThat(savedEntity.getTotalAmount()).isEqualByComparingTo("50.00");
-        final var savedItems = orderItemJpaRepository.findAllByOrderId(order.getId().value(), Pageable.unpaged());
-        assertThat(savedItems.getContent()).hasSize(1);
-        assertThat(savedItems.getContent().get(0).getProductId()).isEqualTo("PROD-1");
+
     }
 
     @Test
@@ -82,10 +81,8 @@ class DefaultOrderRepositoryIT {
         final var found = adapter.findById(order.getId());
 
         assertThat(found).isPresent();
-        assertThat(found.get().getPartnerId()).isEqualTo(PartnerId.from(partnerId));
+        assertThat(found.get().getPartnerId()).isEqualTo(partnerId);
         assertThat(found.get().getStatus()).isEqualTo(OrderStatus.PENDING);
-        assertThat(found.get().getItems()).hasSize(1);
-        assertThat(found.get().getItems().get(0).getProductId()).isEqualTo("PROD-2");
     }
 
     @Test
@@ -166,6 +163,55 @@ class DefaultOrderRepositoryIT {
         assertThat(page.items()).extracting(o -> o.getId()).containsExactly(match.getId().value());
     }
 
+    @Test
+    @DisplayName("Given an existing order, when findOrderDetailsById is called, should return a projection without items (N+1 safe)")
+    void shouldFindOrderDetailsById_returnProjection_withoutItems() {
+        final var partnerId = createPartner();
+        final var order = newPendingOrder(partnerId, "PROD-X", "25.00");
+        adapter.save(order);
+        createdOrderIds.add(order.getId().value());
+
+        final var projection = adapter.findOrderDetailsById(order.getId());
+
+        assertThat(projection).isPresent();
+        assertThat(projection.get()).isInstanceOf(OrderProjection.class);
+        assertThat(projection.get().getId()).isEqualTo(order.getId().value());
+        assertThat(projection.get().getPartnerId()).isEqualTo(partnerId);
+        assertThat(projection.get().getTotalAmount()).isEqualByComparingTo("25.00");
+        assertThat(projection.get().getStatus()).isEqualTo(OrderStatus.PENDING);
+        assertThat(projection.get().getCreatedAt()).isNotNull();
+        assertThat(projection.get().getUpdatedAt()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("Given multiple orders, when findByFilter is called, should return projections without items (N+1 safe)")
+    void shouldFindByFilter_returnProjections_withoutLoadingItems() {
+        final var partnerId = createPartner();
+
+        // Create 3 orders with different statuses
+        final var pending1 = newPendingOrder(partnerId, "PROD-A", "15.00");
+        adapter.save(pending1);
+        createdOrderIds.add(pending1.getId().value());
+
+        final var pending2 = newPendingOrder(partnerId, "PROD-B", "20.00");
+        adapter.save(pending2);
+        createdOrderIds.add(pending2.getId().value());
+
+        final var approved = newPendingOrder(partnerId, "PROD-C", "30.00");
+        approved.transitionTo(OrderStatus.APPROVED);
+        adapter.save(approved);
+        createdOrderIds.add(approved.getId().value());
+
+        // Query only PENDING orders
+        final var page = adapter.findByFilter(null, null, OrderStatus.PENDING, partnerId, 20, 0);
+
+        assertThat(page.items()).hasSize(2);
+        assertThat(page.items()).allMatch(o -> o instanceof OrderProjection, "all items should be OrderProjection instances");
+        assertThat(page.items()).extracting(OrderProjection::getStatus).containsOnly(OrderStatus.PENDING);
+        assertThat(page.items()).extracting(OrderProjection::getId)
+                .containsExactlyInAnyOrder(pending1.getId().value(), pending2.getId().value());
+    }
+
     private UUID createPartner() {
         final var id = UUID.randomUUID();
         partnerJpaRepository.save(PartnerEntity.builder()
@@ -185,7 +231,7 @@ class DefaultOrderRepositoryIT {
                 .unitPrice(Money.of(unitPrice))
                 .build();
         return Order.createPending()
-                .partnerId(PartnerId.from(partnerId))
+                .partnerId(partnerId)
                 .items(List.of(item))
                 .build();
     }

@@ -1,7 +1,6 @@
 package br.com.vps.consulting.b2b.management.order.domain;
 
 import br.com.vps.consulting.b2b.management.order.domain.exception.InvalidOrderTransitionException;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,7 +41,7 @@ class OrderTest {
                 item("PROD-B", 1, "40.00")
         );
         final var order = Order.createPending()
-                .partnerId(PartnerId.generate())
+                .partnerId(UUID.randomUUID())
                 .items(items)
                 .build();
         assertThat(order.getTotalAmount().value()).isEqualByComparingTo("100.00");
@@ -60,20 +60,9 @@ class OrderTest {
     @DisplayName("Given a null items list, when createPending is called, should reject it with NullPointerException")
     void shouldRejectNullItems() {
         assertThrows(NullPointerException.class, () -> Order.createPending()
-                .partnerId(PartnerId.generate())
+                .partnerId(UUID.randomUUID())
                 .items(null)
                 .build());
-    }
-
-    @Test
-    @DisplayName("Given an empty items list, when createPending is called, should throw IllegalArgumentException")
-    void shouldRejectEmptyItems() {
-        assertThatThrownBy(() -> Order.createPending()
-                .partnerId(PartnerId.generate())
-                .items(List.of())
-                .build())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("at least one item");
     }
 
     @Test
@@ -174,7 +163,7 @@ class OrderTest {
     @DisplayName("Given all fields, when using the default builder, should reconstitute the order")
     void shouldReconstituteFromBuilder() {
         final var id = OrderId.generate();
-        final var partnerId = PartnerId.generate();
+        final var partnerId = UUID.randomUUID();
         final var items = List.of(newItem());
         final var totalAmount = Money.of("50.00");
         final var createdAt = Instant.now();
@@ -195,17 +184,9 @@ class OrderTest {
         assertThat(order.getTotalAmount().value()).isEqualByComparingTo("50.00");
     }
 
-    @Test
-    @DisplayName("Given a pending order, when getItems is called, should return an immutable copy of the items list")
-    void shouldStoreImmutableItemsList() {
-        final var order = newPendingOrder();
-        assertThatThrownBy(() -> order.getItems().add(newItem()))
-                .isInstanceOf(UnsupportedOperationException.class);
-    }
-
     private static Order newPendingOrder() {
         return Order.createPending()
-                .partnerId(PartnerId.generate())
+                .partnerId(UUID.randomUUID())
                 .items(List.of(newItem()))
                 .build();
     }

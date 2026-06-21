@@ -3,9 +3,9 @@ package br.com.vps.consulting.b2b.management.order.application.usecase.create;
 import br.com.vps.consulting.b2b.management.order.application.service.PartnerCreditService;
 import br.com.vps.consulting.b2b.management.order.domain.Order;
 import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
+import br.com.vps.consulting.b2b.management.order.domain.OrderItemRepository;
 import br.com.vps.consulting.b2b.management.order.domain.OrderRepository;
 import br.com.vps.consulting.b2b.management.order.domain.event.OrderCreated;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.partner.domain.exception.InsufficientCreditException;
 import br.com.vps.consulting.b2b.management.partner.domain.exception.PartnerNotFoundException;
 import br.com.vps.consulting.b2b.management.shared.core.event.EventPublisher;
@@ -25,10 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultCreateOrderUseCaseTest {
@@ -36,6 +33,7 @@ class DefaultCreateOrderUseCaseTest {
     @Mock private OrderRepository orderRepository;
     @Mock private PartnerCreditService partnerCreditService;
     @Mock private EventPublisher eventPublisher;
+    @Mock private OrderItemRepository orderItemRepository;
     @InjectMocks private DefaultCreateOrderUseCase useCase;
 
     @Test
@@ -49,6 +47,7 @@ class DefaultCreateOrderUseCaseTest {
 
         assertThat(result).isEqualTo(saved.getId().value());
         verify(orderRepository).save(any(Order.class));
+        verify(orderItemRepository).saveAll(any(UUID.class), anyList());
         verify(eventPublisher).publish(any(OrderCreated.class));
     }
 
@@ -108,7 +107,7 @@ class DefaultCreateOrderUseCaseTest {
 
     private static Order newPendingOrder(final UUID partnerId) {
         return Order.createPending()
-                .partnerId(PartnerId.from(partnerId))
+                .partnerId(partnerId)
                 .items(List.of(OrderItem.builder()
                         .productId("PROD-001")
                         .quantity(2)

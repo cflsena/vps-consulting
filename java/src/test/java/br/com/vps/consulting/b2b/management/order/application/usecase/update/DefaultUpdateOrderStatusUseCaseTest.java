@@ -185,7 +185,7 @@ class DefaultUpdateOrderStatusUseCaseTest {
                                                   final OrderStatus status) {
         return Order.builder()
                 .id(OrderId.from(orderId))
-                .partnerId(PartnerId.from(partnerId))
+                .partnerId(partnerId)
                 .items(List.of(OrderItem.builder()
                         .productId("PROD-001").quantity(1)
                         .unitPrice(Money.of(new BigDecimal("100.00"))).build()))

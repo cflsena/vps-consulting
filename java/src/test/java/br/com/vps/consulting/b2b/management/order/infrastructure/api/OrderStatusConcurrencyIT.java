@@ -128,8 +128,8 @@ class OrderStatusConcurrencyIT {
         final var creditLimit = new BigDecimal("1000.00");
         final var orderAmount = new BigDecimal("500.00");
 
-        final var pid = setupPartner(creditLimit);
-        final var oid = createOrder(pid, orderAmount);
+        final var partnerId = setupPartner(creditLimit);
+        final var orderId = createOrder(partnerId, orderAmount);
 
         final var successCount = new AtomicInteger(0);
         final var failCount = new AtomicInteger(0);
@@ -141,7 +141,7 @@ class OrderStatusConcurrencyIT {
             executor.submit(() -> {
                 try {
                     startGate.await();
-                    final var result = mockMvc.perform(patch("/api/v1/b2b/orders/{id}/status", oid)
+                    final var result = mockMvc.perform(patch("/api/v1/b2b/orders/{id}/status", orderId)
                                     .contentType(MediaType.APPLICATION_JSON)
                                     .content("{\"targetStatus\":\"CANCELED\"}"))
                             .andReturn();
@@ -165,10 +165,10 @@ class OrderStatusConcurrencyIT {
         assertThat(successCount.get()).isEqualTo(1);
         assertThat(successCount.get() + failCount.get()).isEqualTo(totalAttempts);
 
-        final var order = orderRepo.findById(oid).orElseThrow();
+        final var order = orderRepo.findById(orderId).orElseThrow();
         assertThat(order.getStatus().name()).isEqualTo("CANCELED");
 
-        final var credit = creditRepo.findById(pid).orElseThrow();
+        final var credit = creditRepo.findById(partnerId).orElseThrow();
         assertThat(credit.getReservedBalance()).isEqualByComparingTo("0.00");
         assertThat(credit.getAvailableBalance()).isEqualByComparingTo(creditLimit);
     }

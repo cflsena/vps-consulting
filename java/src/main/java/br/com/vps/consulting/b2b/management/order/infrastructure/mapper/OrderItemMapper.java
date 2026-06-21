@@ -12,7 +12,7 @@ public final class OrderItemMapper {
 
     private OrderItemMapper() {}
 
-    public static OrderItemEntity toEntity(final OrderItem item, final UUID orderId) {
+    public static OrderItemEntity toEntity(final UUID orderId, final OrderItem item) {
         return OrderItemEntity.builder()
                 .id(item.getId().value())
                 .orderId(orderId)

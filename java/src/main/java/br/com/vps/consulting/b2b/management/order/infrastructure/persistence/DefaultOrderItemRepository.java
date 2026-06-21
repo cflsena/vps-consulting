@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+import java.util.UUID;
+
 @Component
 @RequiredArgsConstructor
 public class DefaultOrderItemRepository implements OrderItemRepository {
@@ -20,6 +23,13 @@ public class DefaultOrderItemRepository implements OrderItemRepository {
     public PageCustom<OrderItem> findByOrderId(final OrderId orderId, final long pageSize, final long pageNumber) {
         final var pageable = PageRequest.of((int) pageNumber, (int) pageSize);
         return OrderItemMapper.toPage(orderItemJpaRepository.findAllByOrderId(orderId.value(), pageable));
+    }
+
+    @Override
+    public void saveAll(final UUID orderId, final List<OrderItem> items) {
+        orderItemJpaRepository.saveAll(
+                items.stream().map(item -> OrderItemMapper.toEntity(orderId, item)).toList()
+        );
     }
 
 }

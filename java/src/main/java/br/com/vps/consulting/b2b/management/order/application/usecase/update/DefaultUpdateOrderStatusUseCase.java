@@ -38,7 +38,7 @@ public class DefaultUpdateOrderStatusUseCase implements UpdateOrderStatusUseCase
         orderRepository.save(order);
 
         final var currentStatus = order.getStatus();
-        final var partnerId = order.getPartnerId().value();
+        final var partnerId = order.getPartnerId();
         final var amount = order.getTotalAmount().value();
         final var currency = order.getTotalAmount().currency();
 
