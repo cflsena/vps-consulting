@@ -24,8 +24,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -115,7 +114,7 @@ class OrderControllerTest {
     @DisplayName("Given an existing order, when GET /api/v1/b2b/orders/{id} is called, should return 200 with the order details")
     void shouldFindOrderByIdAndReturn200() throws Exception {
         final var id = UUID.randomUUID();
-        final var now = OffsetDateTime.now(ZoneOffset.ofHours(-3));
+        final var now = Instant.now();
         given(findOrderByIdUseCase.execute(id))
                 .willReturn(new OrderOutput(id, UUID.randomUUID(), new BigDecimal("100.00"), "PENDING", now, now));
 

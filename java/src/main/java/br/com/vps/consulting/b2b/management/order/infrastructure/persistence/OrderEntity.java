@@ -1,7 +1,6 @@
 package br.com.vps.consulting.b2b.management.order.infrastructure.persistence;
 
 import br.com.vps.consulting.b2b.management.order.domain.OrderStatus;
-import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,10 +26,6 @@ public class OrderEntity {
 
     @Column(name = "partner_id", nullable = false)
     private UUID partnerId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "partner_id", insertable = false, updatable = false)
-    private PartnerEntity partner;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)

@@ -32,7 +32,4 @@ public class PartnerEntity {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
-    @OneToMany(mappedBy = "partner", fetch = FetchType.LAZY)
-    private List<OrderEntity> orders;
-
 }
