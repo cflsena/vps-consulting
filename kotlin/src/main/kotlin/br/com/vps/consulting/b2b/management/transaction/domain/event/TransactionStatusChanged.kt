@@ -4,7 +4,7 @@ import br.com.vps.consulting.b2b.management.shared.core.event.DomainEvent
 import br.com.vps.consulting.b2b.management.shared.core.vo.Money
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionStatus
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
-import java.util.UUID
+import java.util.*
 
 data class TransactionStatusChanged(
     override val aggregateId: UUID,

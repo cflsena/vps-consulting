@@ -2,7 +2,7 @@ package br.com.vps.consulting.b2b.management.transaction.application.usecase.cre
 
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
 import java.math.BigDecimal
-import java.util.UUID
+import java.util.*
 
 data class CreateTransactionInput(
     val partnerId: UUID,

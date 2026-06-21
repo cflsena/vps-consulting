@@ -1,7 +1,7 @@
 package br.com.vps.consulting.b2b.management.transaction.domain
 
 import br.com.vps.consulting.b2b.management.shared.core.entity.Identifier
-import java.util.UUID
+import java.util.*
 
 @JvmInline
 value class TransactionId(override val value: UUID) : Identifier<UUID> {

@@ -12,7 +12,7 @@ import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
 import org.mockito.kotlin.whenever
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class ListTransactionHistoryValidatorTest {

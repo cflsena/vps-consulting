@@ -3,7 +3,7 @@ package br.com.vps.consulting.b2b.management.transaction.infrastructure.api.resp
 import br.com.vps.consulting.b2b.management.transaction.application.usecase.create.CreateTransactionOutput
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionStatus
 import io.swagger.v3.oas.annotations.media.Schema
-import java.util.UUID
+import java.util.*
 
 data class TransactionResponse(
     @field:Schema(description = "ID único da transação")

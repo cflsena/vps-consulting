@@ -1,20 +1,11 @@
 package br.com.vps.consulting.b2b.management.transaction.infrastructure.persistence
 
-import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerEntity
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionStatus
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
-import jakarta.persistence.Column
-import jakarta.persistence.Entity
-import jakarta.persistence.EnumType
-import jakarta.persistence.Enumerated
-import jakarta.persistence.FetchType
-import jakarta.persistence.Id
-import jakarta.persistence.JoinColumn
-import jakarta.persistence.ManyToOne
-import jakarta.persistence.Table
+import jakarta.persistence.*
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @Entity
 @Table(name = "transaction")
@@ -49,9 +40,6 @@ class TransactionEntity(
     val createdAt: Instant,
 
     @Column(name = "updated_at", nullable = false)
-    val updatedAt: Instant,
+    val updatedAt: Instant
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "partner_id", insertable = false, updatable = false)
-    val partner: PartnerEntity? = null,
 )

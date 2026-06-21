@@ -1,7 +1,7 @@
 package br.com.vps.consulting.b2b.management.transaction.application.usecase.create
 
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionStatus
-import java.util.UUID
+import java.util.*
 
 data class CreateTransactionOutput(
     val transactionId: UUID,

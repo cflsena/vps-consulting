@@ -2,7 +2,7 @@ package br.com.vps.consulting.b2b.management.transaction.application.usecase.his
 
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 data class ListTransactionHistoryInput(
     val partnerId: UUID,

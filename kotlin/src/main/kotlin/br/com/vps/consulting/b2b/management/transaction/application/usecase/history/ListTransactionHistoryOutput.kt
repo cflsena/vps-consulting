@@ -6,7 +6,7 @@ import br.com.vps.consulting.b2b.management.transaction.domain.TransactionStatus
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
 import java.math.BigDecimal
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 data class ListTransactionHistoryOutput(
     val id: UUID,

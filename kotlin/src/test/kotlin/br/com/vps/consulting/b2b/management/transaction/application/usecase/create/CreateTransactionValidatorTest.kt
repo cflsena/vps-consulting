@@ -1,5 +1,6 @@
 package br.com.vps.consulting.b2b.management.transaction.application.usecase.create
 
+import br.com.vps.consulting.b2b.management.shared.core.vo.Money
 import br.com.vps.consulting.b2b.management.transaction.application.service.PartnerService
 import br.com.vps.consulting.b2b.management.transaction.domain.Transaction
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionRepository
@@ -8,7 +9,6 @@ import br.com.vps.consulting.b2b.management.transaction.domain.exception.Duplica
 import br.com.vps.consulting.b2b.management.transaction.domain.exception.InvalidIdempotencyKeyException
 import br.com.vps.consulting.b2b.management.transaction.domain.exception.InvalidTransactionAmountException
 import br.com.vps.consulting.b2b.management.transaction.domain.exception.TransactionPartnerNotFoundException
-import br.com.vps.consulting.b2b.management.shared.core.vo.Money
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.BeforeEach
@@ -21,7 +21,7 @@ import org.mockito.kotlin.never
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.math.BigDecimal
-import java.util.UUID
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class CreateTransactionValidatorTest {

@@ -2,7 +2,7 @@ package br.com.vps.consulting.b2b.management.transaction.domain.exception
 
 import br.com.vps.consulting.b2b.management.shared.core.exception.DomainException
 import br.com.vps.consulting.b2b.management.shared.core.vo.Money
-import java.util.UUID
+import java.util.*
 
 class InsufficientBalanceException(partnerId: UUID, requested: Money, available: Money) :
     DomainException(

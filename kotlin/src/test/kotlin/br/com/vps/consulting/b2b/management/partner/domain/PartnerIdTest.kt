@@ -2,7 +2,7 @@ package br.com.vps.consulting.b2b.management.partner.domain
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import java.util.UUID
+import java.util.*
 
 class PartnerIdTest {
 

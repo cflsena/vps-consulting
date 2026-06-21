@@ -1,7 +1,6 @@
 package br.com.vps.consulting.b2b.management.transaction.infrastructure.api
 
 import br.com.vps.consulting.b2b.management.shared.infrastructure.api.pagination.PageResponseDTO
-import br.com.vps.consulting.b2b.management.transaction.application.usecase.history.ListTransactionHistoryOutput
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.api.request.CreditTransactionRequest
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.api.request.DebitTransactionRequest
@@ -15,14 +14,9 @@ import jakarta.validation.Valid
 import org.springframework.format.annotation.DateTimeFormat
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.*
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 
 @RequestMapping("/api/v1/b2b/partners/{partnerId}/transactions")
 @Tag(name = "Transações", description = "Operações de crédito, débito e histórico de transações dos parceiros")

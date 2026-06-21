@@ -1,9 +1,9 @@
 package br.com.vps.consulting.b2b.management.transaction.application.usecase.common.handler
 
-import br.com.vps.consulting.b2b.management.transaction.domain.exception.InsufficientBalanceException
 import br.com.vps.consulting.b2b.management.transaction.application.service.PartnerService
 import br.com.vps.consulting.b2b.management.transaction.domain.Transaction
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
+import br.com.vps.consulting.b2b.management.transaction.domain.exception.InsufficientBalanceException
 import br.com.vps.consulting.b2b.management.transaction.domain.exception.InvalidDebitAmountException
 import jakarta.inject.Named
 import org.slf4j.LoggerFactory

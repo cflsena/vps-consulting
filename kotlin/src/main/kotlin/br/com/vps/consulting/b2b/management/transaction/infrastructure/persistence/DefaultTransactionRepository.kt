@@ -1,11 +1,7 @@
 package br.com.vps.consulting.b2b.management.transaction.infrastructure.persistence
 
 import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom
-import br.com.vps.consulting.b2b.management.transaction.domain.Transaction
-import br.com.vps.consulting.b2b.management.transaction.domain.TransactionId
-import br.com.vps.consulting.b2b.management.transaction.domain.TransactionRepository
-import br.com.vps.consulting.b2b.management.transaction.domain.TransactionStatus
-import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
+import br.com.vps.consulting.b2b.management.transaction.domain.*
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.mapper.toDomain
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.mapper.toEntity
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.persistence.jpa.TransactionJpaRepository
@@ -15,7 +11,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Component
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 @Component
 class DefaultTransactionRepository(

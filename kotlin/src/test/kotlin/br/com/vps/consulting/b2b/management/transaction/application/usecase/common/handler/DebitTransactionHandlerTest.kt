@@ -16,7 +16,7 @@ import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import java.math.BigDecimal
-import java.util.UUID
+import java.util.*
 
 @ExtendWith(MockitoExtension::class)
 class DebitTransactionHandlerTest {

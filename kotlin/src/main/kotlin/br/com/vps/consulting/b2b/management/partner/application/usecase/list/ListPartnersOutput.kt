@@ -3,7 +3,7 @@ package br.com.vps.consulting.b2b.management.partner.application.usecase.list
 import br.com.vps.consulting.b2b.management.partner.domain.Partner
 import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 data class ListPartnersOutput(
     val id: UUID,

@@ -4,7 +4,7 @@ import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
 import br.com.vps.consulting.b2b.management.transaction.infrastructure.persistence.TransactionEntity
 import org.springframework.data.jpa.domain.Specification
 import java.time.Instant
-import java.util.UUID
+import java.util.*
 
 object TransactionSpecification {
 
