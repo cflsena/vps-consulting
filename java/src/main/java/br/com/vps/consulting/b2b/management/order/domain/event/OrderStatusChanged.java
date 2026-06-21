@@ -1,7 +1,7 @@
 package br.com.vps.consulting.b2b.management.order.domain.event;
 
-import br.com.vps.consulting.b2b.management.shared.core.event.DomainEvent;
 import br.com.vps.consulting.b2b.management.order.domain.OrderStatus;
+import br.com.vps.consulting.b2b.management.shared.core.event.DomainEvent;
 
 import java.math.BigDecimal;
 import java.util.UUID;

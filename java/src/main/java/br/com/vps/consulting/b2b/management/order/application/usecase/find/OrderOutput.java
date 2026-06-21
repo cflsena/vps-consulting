@@ -5,10 +5,8 @@ import lombok.AccessLevel;
 import lombok.Builder;
 
 import java.math.BigDecimal;
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.UUID;
-
-import static br.com.vps.consulting.b2b.management.shared.core.utils.ManagementConstants.BRASILIA_TIME_ZONE;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record OrderOutput(
@@ -16,8 +14,8 @@ public record OrderOutput(
         UUID partnerId,
         BigDecimal totalAmount,
         String status,
-        OffsetDateTime createdAt,
-        OffsetDateTime updatedAt
+        Instant createdAt,
+        Instant updatedAt
 ) {
     public static OrderOutput from(final OrderProjection order) {
         return OrderOutput.builder()
@@ -25,8 +23,8 @@ public record OrderOutput(
                 .partnerId(order.getPartnerId())
                 .totalAmount(order.getTotalAmount())
                 .status(order.getStatus().name())
-                .createdAt(order.getCreatedAt().atOffset(BRASILIA_TIME_ZONE))
-                .updatedAt(order.getUpdatedAt().atOffset(BRASILIA_TIME_ZONE))
+                .createdAt(order.getCreatedAt())
+                .updatedAt(order.getUpdatedAt())
                 .build();
     }
 }

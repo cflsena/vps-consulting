@@ -7,7 +7,6 @@ import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
 import br.com.vps.consulting.b2b.management.order.domain.OrderStatus;
 import br.com.vps.consulting.b2b.management.order.domain.projection.OrderProjection;
 import br.com.vps.consulting.b2b.management.order.infrastructure.persistence.DefaultOrderRepository;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerEntity;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.jpa.PartnerJpaRepository;
 import br.com.vps.consulting.b2b.management.shared.core.vo.Money;

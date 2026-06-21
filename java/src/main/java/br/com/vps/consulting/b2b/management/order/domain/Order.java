@@ -1,7 +1,6 @@
 package br.com.vps.consulting.b2b.management.order.domain;
 
 import br.com.vps.consulting.b2b.management.order.domain.exception.InvalidOrderTransitionException;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.shared.core.entity.Entity;
 import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
 import lombok.Builder;

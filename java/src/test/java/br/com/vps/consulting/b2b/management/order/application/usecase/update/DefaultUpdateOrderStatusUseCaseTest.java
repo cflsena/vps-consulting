@@ -1,15 +1,10 @@
 package br.com.vps.consulting.b2b.management.order.application.usecase.update;
 
 import br.com.vps.consulting.b2b.management.order.application.service.PartnerCreditService;
-import br.com.vps.consulting.b2b.management.order.domain.Order;
-import br.com.vps.consulting.b2b.management.order.domain.OrderId;
-import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
-import br.com.vps.consulting.b2b.management.order.domain.OrderRepository;
-import br.com.vps.consulting.b2b.management.order.domain.OrderStatus;
+import br.com.vps.consulting.b2b.management.order.domain.*;
 import br.com.vps.consulting.b2b.management.order.domain.event.OrderStatusChanged;
 import br.com.vps.consulting.b2b.management.order.domain.exception.InvalidOrderTransitionException;
 import br.com.vps.consulting.b2b.management.order.domain.exception.OrderNotFoundException;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.shared.core.event.EventPublisher;
 import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
 import org.junit.jupiter.api.DisplayName;
@@ -30,9 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultUpdateOrderStatusUseCaseTest {

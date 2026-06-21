@@ -1,8 +1,8 @@
 package br.com.vps.consulting.b2b.management.partner.application.usecase.create;
 
 import br.com.vps.consulting.b2b.management.partner.domain.Partner;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerCreditRepository;
+import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

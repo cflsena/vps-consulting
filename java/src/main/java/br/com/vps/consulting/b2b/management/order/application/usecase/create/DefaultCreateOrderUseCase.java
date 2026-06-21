@@ -6,7 +6,6 @@ import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
 import br.com.vps.consulting.b2b.management.order.domain.OrderItemRepository;
 import br.com.vps.consulting.b2b.management.order.domain.OrderRepository;
 import br.com.vps.consulting.b2b.management.order.domain.event.OrderCreated;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
 import br.com.vps.consulting.b2b.management.shared.core.event.EventPublisher;
 import br.com.vps.consulting.b2b.management.shared.core.vo.Money;
 import jakarta.inject.Named;

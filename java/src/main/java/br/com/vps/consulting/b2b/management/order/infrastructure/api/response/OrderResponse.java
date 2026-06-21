@@ -9,6 +9,8 @@ import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.UUID;
 
+import static br.com.vps.consulting.b2b.management.shared.core.utils.ManagementConstants.BRASILIA_TIME_ZONE;
+
 @Builder(access = AccessLevel.PRIVATE)
 public record OrderResponse(
         @Schema(description = "Identificador único do pedido")
@@ -36,8 +38,8 @@ public record OrderResponse(
                 .partnerId(orderOutput.partnerId())
                 .totalAmount(orderOutput.totalAmount())
                 .status(orderOutput.status())
-                .createdAt(orderOutput.createdAt())
-                .updatedAt(orderOutput.updatedAt())
+                .createdAt(orderOutput.createdAt().atOffset(BRASILIA_TIME_ZONE))
+                .updatedAt(orderOutput.updatedAt().atOffset(BRASILIA_TIME_ZONE))
                 .build();
     }
 

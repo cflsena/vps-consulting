@@ -1,12 +1,7 @@
 package br.com.vps.consulting.b2b.management.partner.infrastructure.persistence;
 
 import br.com.vps.consulting.b2b.management.order.infrastructure.persistence.OrderEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

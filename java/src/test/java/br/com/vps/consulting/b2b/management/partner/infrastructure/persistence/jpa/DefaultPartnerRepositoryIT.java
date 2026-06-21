@@ -2,9 +2,9 @@ package br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.
 
 import br.com.vps.consulting.b2b.management.TestcontainersConfiguration;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.DefaultPartnerCreditRepository;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerCreditEntity;
 import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.PartnerEntity;
-import br.com.vps.consulting.b2b.management.partner.infrastructure.persistence.DefaultPartnerCreditRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

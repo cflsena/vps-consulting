@@ -2,7 +2,6 @@ package br.com.vps.consulting.b2b.management.order.application.usecase.list.item
 
 import br.com.vps.consulting.b2b.management.order.domain.OrderItem;
 import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 

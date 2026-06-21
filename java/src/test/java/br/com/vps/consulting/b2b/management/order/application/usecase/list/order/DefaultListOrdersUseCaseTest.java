@@ -3,6 +3,7 @@ package br.com.vps.consulting.b2b.management.order.application.usecase.list.orde
 import br.com.vps.consulting.b2b.management.order.domain.OrderRepository;
 import br.com.vps.consulting.b2b.management.order.domain.OrderStatus;
 import br.com.vps.consulting.b2b.management.order.domain.projection.OrderProjection;
+import br.com.vps.consulting.b2b.management.shared.core.exception.DomainException;
 import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -11,17 +12,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import br.com.vps.consulting.b2b.management.shared.core.exception.DomainException;
-
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class DefaultListOrdersUseCaseTest {

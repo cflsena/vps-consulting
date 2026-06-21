@@ -4,8 +4,8 @@ import br.com.vps.consulting.b2b.management.partner.application.usecase.adjust.A
 import br.com.vps.consulting.b2b.management.partner.application.usecase.create.CreatePartnerUseCase;
 import br.com.vps.consulting.b2b.management.partner.application.usecase.find.FindPartnerCreditByIdUseCase;
 import br.com.vps.consulting.b2b.management.partner.application.usecase.list.ListPartnersUseCase;
-import br.com.vps.consulting.b2b.management.partner.application.usecase.replenish.ReplenishAvailableCreditUseCase;
 import br.com.vps.consulting.b2b.management.partner.application.usecase.list.PartnerListOutput;
+import br.com.vps.consulting.b2b.management.partner.application.usecase.replenish.ReplenishAvailableCreditUseCase;
 import br.com.vps.consulting.b2b.management.partner.domain.Partner;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerCredit;
 import br.com.vps.consulting.b2b.management.partner.domain.PartnerId;
@@ -31,9 +31,7 @@ import java.util.UUID;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doNothing;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

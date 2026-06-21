@@ -1,7 +1,7 @@
 package br.com.vps.consulting.b2b.management.order.domain.exception;
 
-import br.com.vps.consulting.b2b.management.shared.core.exception.DomainException;
 import br.com.vps.consulting.b2b.management.order.domain.OrderStatus;
+import br.com.vps.consulting.b2b.management.shared.core.exception.DomainException;
 
 import java.util.UUID;
 
