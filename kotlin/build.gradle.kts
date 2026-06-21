@@ -84,7 +84,7 @@ tasks.jacocoTestCoverageVerification {
 	violationRules {
 		rule {
 			element = "PACKAGE"
-			includes = listOf("br.com.vps.consulting.b2b.management.domain.*")
+			includes = listOf("br.com.vps.consulting.b2b.management.*.domain*")
 			limit {
 				counter = "INSTRUCTION"
 				value = "COVEREDRATIO"
@@ -93,7 +93,7 @@ tasks.jacocoTestCoverageVerification {
 		}
 		rule {
 			element = "PACKAGE"
-			includes = listOf("br.com.vps.consulting.b2b.management.application.*")
+			includes = listOf("br.com.vps.consulting.b2b.management.*.application*")
 			limit {
 				counter = "INSTRUCTION"
 				value = "COVEREDRATIO"
@@ -102,7 +102,7 @@ tasks.jacocoTestCoverageVerification {
 		}
 		rule {
 			element = "PACKAGE"
-			includes = listOf("br.com.vps.consulting.b2b.management.infrastructure.*")
+			includes = listOf("br.com.vps.consulting.b2b.management.*.infrastructure*")
 			limit {
 				counter = "INSTRUCTION"
 				value = "COVEREDRATIO"
