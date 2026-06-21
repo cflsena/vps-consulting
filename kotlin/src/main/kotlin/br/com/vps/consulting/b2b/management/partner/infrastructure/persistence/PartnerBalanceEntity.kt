@@ -2,7 +2,10 @@ package br.com.vps.consulting.b2b.management.partner.infrastructure.persistence
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.FetchType
 import jakarta.persistence.Id
+import jakarta.persistence.JoinColumn
+import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import java.math.BigDecimal
 import java.time.Instant
@@ -23,4 +26,8 @@ class PartnerBalanceEntity(
 
     @Column(name = "updated_at", nullable = false)
     val updatedAt: Instant,
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "partner_id", insertable = false, updatable = false)
+    val partner: PartnerEntity? = null,
 )
