@@ -2,6 +2,7 @@ package br.com.vps.consulting.b2b.management.order.infrastructure.api.response;
 
 import br.com.vps.consulting.b2b.management.order.application.usecase.list.item.OrderItemListOutput;
 import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
+import br.com.vps.consulting.b2b.management.shared.infrastructure.api.pagination.PageResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -24,8 +25,8 @@ public record OrderItemListResponse(
         BigDecimal unitPrice
 ) {
 
-    public static PageCustom<OrderItemListResponse> from(final PageCustom<OrderItemListOutput> page) {
-        return PageCustom.<OrderItemListResponse>builder()
+    public static PageResponseDTO<OrderItemListResponse> from(final PageCustom<OrderItemListOutput> page) {
+        return PageResponseDTO.<OrderItemListResponse>builder()
                 .pageNumber(page.pageNumber())
                 .pageSize(page.pageSize())
                 .numberOfElements(page.numberOfElements())

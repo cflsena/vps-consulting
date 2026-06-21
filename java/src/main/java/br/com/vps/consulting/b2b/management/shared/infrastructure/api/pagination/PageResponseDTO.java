@@ -1,10 +1,11 @@
 package br.com.vps.consulting.b2b.management.shared.infrastructure.api.pagination;
 
-import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Builder;
 
 import java.util.List;
 
+@Builder
 public record PageResponseDTO<T>(
         @Schema(description = "Índice da página (páginas começam na posição 0)", example = "0")
         int pageNumber,
@@ -19,14 +20,4 @@ public record PageResponseDTO<T>(
         @Schema(description = "Lista de elementos")
         List<T> items
 ) {
-    public static <T> PageResponseDTO<T> from(final PageCustom<T> page) {
-        return new PageResponseDTO<>(
-                page.pageNumber(),
-                page.pageSize(),
-                page.numberOfElements(),
-                page.totalPages(),
-                page.totalElements(),
-                page.items()
-        );
-    }
 }

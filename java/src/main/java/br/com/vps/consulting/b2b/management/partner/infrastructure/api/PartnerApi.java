@@ -1,77 +1,27 @@
 package br.com.vps.consulting.b2b.management.partner.infrastructure.api;
 
-import br.com.vps.consulting.b2b.management.partner.application.usecase.list.PartnerListOutput;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.request.AdjustCreditLimitRequest;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.request.CreatePartnerRequest;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.request.ReplenishAvailableCreditRequest;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.response.PartnerCreatedResponse;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.response.PartnerCreditResponse;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.response.PartnerListResponse;
 import br.com.vps.consulting.b2b.management.shared.infrastructure.api.ApiBaseDocumentation;
 import br.com.vps.consulting.b2b.management.shared.infrastructure.api.pagination.PageResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
-import java.math.BigDecimal;
-import java.time.OffsetDateTime;
 import java.util.UUID;
 
 @RequestMapping("api/v1/b2b/partners")
 @Tag(name = "Parceiro", description = "API para gerenciamento de parceiros B2B e seus créditos")
 public interface PartnerApi extends ApiBaseDocumentation {
-
-    record CreatePartnerRequest(
-            @Schema(description = "Nome do parceiro")
-            @NotBlank String name,
-
-            @Schema(description = "Documento do parceiro (CPF ou CNPJ)")
-            @NotBlank String document,
-
-            @Schema(description = "Limite de crédito inicial do parceiro", example = "10000.00")
-            @NotNull @Positive BigDecimal creditLimit
-    ) {}
-
-    record AdjustCreditLimitRequest(
-            @Schema(description = "Novo limite de crédito a ser configurado", example = "15000.00")
-            @NotNull @Positive BigDecimal newCreditLimit
-    ) {}
-
-    record ReplenishAvailableCreditRequest(
-            @Schema(description = "Valor a ser reposto no saldo disponível do parceiro", example = "2000.00")
-            @NotNull @Positive BigDecimal amount
-    ) {}
-
-    record PartnerCreatedResponse(
-            @Schema(description = "ID único do parceiro criado")
-            UUID id
-    ) {}
-
-    record PartnerCreditResponse(
-            @Schema(description = "ID do parceiro")
-            UUID partnerId,
-
-            @Schema(description = "Limite de crédito total configurado para o parceiro")
-            BigDecimal creditLimit,
-
-            @Schema(description = "Saldo disponível para utilização em novos pedidos")
-            BigDecimal availableBalance,
-
-            @Schema(description = "Saldo reservado por pedidos com status PENDING")
-            BigDecimal reservedBalance,
-
-            @Schema(description = "Data e hora da última atualização do crédito (fuso horário Brasília, GMT-3)")
-            OffsetDateTime updatedAt
-    ) {}
 
     @Operation(
         summary = "Listar parceiros",
@@ -79,7 +29,7 @@ public interface PartnerApi extends ApiBaseDocumentation {
     )
     @ApiResponse(responseCode = "200", description = "Parceiros listados com sucesso")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    ResponseEntity<PageResponseDTO<PartnerListOutput>> listPartners(
+    ResponseEntity<PageResponseDTO<PartnerListResponse>> listPartners(
             @Parameter(description = "Número da página (base 0)", example = "0")
             @RequestParam(defaultValue = "0") int pageNumber,
             @Parameter(description = "Quantidade de registros por página", example = "20")

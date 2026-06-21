@@ -5,12 +5,16 @@ import br.com.vps.consulting.b2b.management.partner.application.usecase.adjust.A
 import br.com.vps.consulting.b2b.management.partner.application.usecase.create.CreatePartnerInput;
 import br.com.vps.consulting.b2b.management.partner.application.usecase.create.CreatePartnerUseCase;
 import br.com.vps.consulting.b2b.management.partner.application.usecase.find.FindPartnerCreditByIdUseCase;
-import br.com.vps.consulting.b2b.management.partner.application.usecase.replenish.ReplenishAvailableCreditInput;
-import br.com.vps.consulting.b2b.management.partner.application.usecase.replenish.ReplenishAvailableCreditUseCase;
-import br.com.vps.consulting.b2b.management.partner.domain.PartnerCredit;
 import br.com.vps.consulting.b2b.management.partner.application.usecase.list.ListPartnersInput;
 import br.com.vps.consulting.b2b.management.partner.application.usecase.list.ListPartnersUseCase;
-import br.com.vps.consulting.b2b.management.partner.application.usecase.list.PartnerListOutput;
+import br.com.vps.consulting.b2b.management.partner.application.usecase.replenish.ReplenishAvailableCreditInput;
+import br.com.vps.consulting.b2b.management.partner.application.usecase.replenish.ReplenishAvailableCreditUseCase;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.request.AdjustCreditLimitRequest;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.request.CreatePartnerRequest;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.request.ReplenishAvailableCreditRequest;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.response.PartnerCreatedResponse;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.response.PartnerCreditResponse;
+import br.com.vps.consulting.b2b.management.partner.infrastructure.api.response.PartnerListResponse;
 import br.com.vps.consulting.b2b.management.shared.core.utils.ManagementConstants;
 import br.com.vps.consulting.b2b.management.shared.infrastructure.api.pagination.PageResponseDTO;
 import lombok.RequiredArgsConstructor;
@@ -62,9 +66,9 @@ public class PartnerController implements PartnerApi {
     }
 
     @Override
-    public ResponseEntity<PageResponseDTO<PartnerListOutput>> listPartners(final int pageNumber, final int pageSize) {
+    public ResponseEntity<PageResponseDTO<PartnerListResponse>> listPartners(final int pageNumber, final int pageSize) {
         final var page = listPartnersUseCase.execute(new ListPartnersInput(pageSize, pageNumber));
-        return ResponseEntity.ok(PageResponseDTO.from(page));
+        return ResponseEntity.ok(PartnerListResponse.from(page));
     }
 
 }

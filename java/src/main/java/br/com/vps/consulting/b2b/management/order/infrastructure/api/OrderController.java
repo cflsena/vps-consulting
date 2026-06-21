@@ -50,9 +50,7 @@ public class OrderController implements OrderApi {
             final UUID partnerId, final int pageNumber, final int pageSize) {
         final var page = listOrdersUseCase.execute(
                 OrderRequestMapper.toListInput(from, to, status, partnerId, pageSize, pageNumber));
-        return ResponseEntity.ok(PageResponseDTO.from(
-                OrderListResponse.from(page)
-        ));
+        return ResponseEntity.ok(OrderListResponse.from(page));
     }
 
     @Override
@@ -65,9 +63,7 @@ public class OrderController implements OrderApi {
     public ResponseEntity<PageResponseDTO<OrderItemListResponse>> listOrderItems(
             final UUID id, final int pageNumber, final int pageSize) {
         final var page = listOrderItemsUseCase.execute(new ListOrderItemsInput(id, pageSize, pageNumber));
-        return ResponseEntity.ok(PageResponseDTO.from(
-                OrderItemListResponse.from(page)
-        ));
+        return ResponseEntity.ok(OrderItemListResponse.from(page));
     }
 
     @Override

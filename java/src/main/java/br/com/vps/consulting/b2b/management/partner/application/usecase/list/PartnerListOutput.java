@@ -2,28 +2,18 @@ package br.com.vps.consulting.b2b.management.partner.application.usecase.list;
 
 import br.com.vps.consulting.b2b.management.partner.domain.Partner;
 import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
-import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
 
-import java.time.OffsetDateTime;
+import java.time.Instant;
 import java.util.UUID;
-
-import static br.com.vps.consulting.b2b.management.shared.core.utils.ManagementConstants.BRASILIA_TIME_ZONE;
 
 @Builder(access = AccessLevel.PRIVATE)
 public record PartnerListOutput(
-        @Schema(description = "Identificador único do parceiro")
         UUID id,
-
-        @Schema(description = "Nome do parceiro")
         String name,
-
-        @Schema(description = "Documento do parceiro (CPF ou CNPJ)")
         String document,
-
-        @Schema(description = "Data e hora de cadastro do parceiro (fuso horário Brasília, GMT-3)")
-        OffsetDateTime createdAt
+        Instant createdAt
 ) {
 
     public static PageCustom<PartnerListOutput> from(final PageCustom<Partner> page) {
@@ -42,7 +32,7 @@ public record PartnerListOutput(
                 .id(partner.getId().value())
                 .name(partner.getName())
                 .document(partner.getDocument())
-                .createdAt(partner.getCreatedAt().atOffset(BRASILIA_TIME_ZONE))
+                .createdAt(partner.getCreatedAt())
                 .build();
     }
 

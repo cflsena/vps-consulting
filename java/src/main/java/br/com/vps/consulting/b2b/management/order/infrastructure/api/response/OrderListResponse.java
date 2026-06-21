@@ -2,6 +2,7 @@ package br.com.vps.consulting.b2b.management.order.infrastructure.api.response;
 
 import br.com.vps.consulting.b2b.management.order.application.usecase.list.order.OrderListOutput;
 import br.com.vps.consulting.b2b.management.shared.core.page.PageCustom;
+import br.com.vps.consulting.b2b.management.shared.infrastructure.api.pagination.PageResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -31,8 +32,8 @@ public record OrderListResponse(
         OffsetDateTime updatedAt
 ) {
 
-    public static PageCustom<OrderListResponse> from(final PageCustom<OrderListOutput> page) {
-        return PageCustom.<OrderListResponse>builder()
+    public static PageResponseDTO<OrderListResponse> from(final PageCustom<OrderListOutput> page) {
+        return PageResponseDTO.<OrderListResponse>builder()
                 .pageNumber(page.pageNumber())
                 .pageSize(page.pageSize())
                 .numberOfElements(page.numberOfElements())
