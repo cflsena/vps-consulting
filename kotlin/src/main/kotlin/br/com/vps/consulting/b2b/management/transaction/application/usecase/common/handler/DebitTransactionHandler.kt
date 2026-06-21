@@ -6,7 +6,6 @@ import br.com.vps.consulting.b2b.management.transaction.domain.Transaction
 import br.com.vps.consulting.b2b.management.transaction.domain.TransactionType
 import br.com.vps.consulting.b2b.management.transaction.domain.exception.InvalidDebitAmountException
 import jakarta.inject.Named
-import jakarta.transaction.Transactional
 import org.slf4j.LoggerFactory
 import java.math.BigDecimal
 
@@ -18,7 +17,6 @@ class DebitTransactionHandler(
 
     private val logger = LoggerFactory.getLogger(javaClass)
 
-    @Transactional
     override fun successfullyProcessed(transaction: Transaction): Boolean {
         logger.info("Iniciando reconciliação de débito. Transação: [id=${transaction.id}, amount=${transaction.amount}]")
         validate(transaction)
