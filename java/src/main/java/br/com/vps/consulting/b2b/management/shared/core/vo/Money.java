@@ -7,12 +7,13 @@ import java.util.Objects;
 public record Money(BigDecimal value, String currency) implements ValueObject {
 
     public static final String DEFAULT_CURRENCY = "BRL";
+    public static final Money ZERO = new Money(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN), DEFAULT_CURRENCY);
 
     public Money {
         Objects.requireNonNull(value, "value é obrigatório");
         Objects.requireNonNull(currency, "currency é obrigatório");
         if (value.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("Money value cannot be negative: " + value);
+            throw new IllegalArgumentException("O valor não pode ser negativo: " + value);
         }
     }
 
@@ -22,10 +23,6 @@ public record Money(BigDecimal value, String currency) implements ValueObject {
 
     public static Money of(final String amount) {
         return new Money(new BigDecimal(amount).setScale(2, RoundingMode.HALF_EVEN), DEFAULT_CURRENCY);
-    }
-
-    public static Money zero() {
-        return new Money(BigDecimal.ZERO.setScale(2, RoundingMode.HALF_EVEN), DEFAULT_CURRENCY);
     }
 
     public Money add(final Money other) {
@@ -40,7 +37,7 @@ public record Money(BigDecimal value, String currency) implements ValueObject {
 
     public Money multiply(final int quantity) {
         if (quantity < 0) {
-            throw new IllegalArgumentException("Quantity cannot be negative: " + quantity);
+            throw new IllegalArgumentException("A quantidade não pode ser negativa: " + quantity);
         }
         return new Money(this.value.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_EVEN), this.currency);
     }
@@ -61,7 +58,7 @@ public record Money(BigDecimal value, String currency) implements ValueObject {
 
     private void assertSameCurrency(final Money other) {
         if (!this.currency.equals(other.currency)) {
-            throw new IllegalArgumentException("Currency mismatch: " + this.currency + " vs " + other.currency);
+            throw new IllegalArgumentException("Moedas incompatíveis: " + this.currency + " vs " + other.currency);
         }
     }
 

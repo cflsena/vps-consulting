@@ -6,6 +6,6 @@ import java.util.Objects;
 public interface CreateOrderItemValidator {
     static void validate(final List<CreateOrderInput.Item> items) {
         Objects.requireNonNull(items, "items é obrigatório");
-        if (items.isEmpty()) throw new IllegalArgumentException("Order must have at least one item");
+        if (items.isEmpty()) throw new IllegalArgumentException("O pedido deve ter pelo menos um item");
     }
 }

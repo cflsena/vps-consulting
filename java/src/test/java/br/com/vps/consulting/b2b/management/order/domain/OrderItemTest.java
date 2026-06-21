@@ -58,7 +58,7 @@ class OrderItemTest {
                 .unitPrice(Money.of("10.00"))
                 .build())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("productId cannot be blank");
+                .hasMessageContaining("não pode estar vazio");
     }
 
     @Test
@@ -80,7 +80,7 @@ class OrderItemTest {
                 .unitPrice(Money.of("10.00"))
                 .build())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("quantity must be positive");
+                .hasMessageContaining("deve ser positiva");
     }
 
     @Test
@@ -92,7 +92,7 @@ class OrderItemTest {
                 .unitPrice(Money.of("10.00"))
                 .build())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("quantity must be positive");
+                .hasMessageContaining("deve ser positiva");
     }
 
     private static OrderItem newItem() {

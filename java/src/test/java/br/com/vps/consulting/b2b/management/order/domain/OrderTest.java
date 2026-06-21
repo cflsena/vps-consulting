@@ -73,7 +73,7 @@ class OrderTest {
                 .items(List.of())
                 .build())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Order totalAmount must be greater than zero");
+                .hasMessageContaining("maior que zero");
     }
 
     @Test

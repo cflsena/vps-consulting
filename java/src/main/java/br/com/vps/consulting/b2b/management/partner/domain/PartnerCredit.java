@@ -27,8 +27,8 @@ public class PartnerCredit extends Entity<PartnerId> {
                          final Instant updatedAt) {
         this.id = PartnerId.from(id);
         this.creditLimit = Money.of(creditLimit);
-        this.availableBalance = availableBalance == null ? Money.zero() : Money.of(availableBalance);
-        this.reservedBalance = reservedBalance == null ? Money.zero() : Money.of(reservedBalance);
+        this.availableBalance = availableBalance == null ? Money.ZERO : Money.of(availableBalance);
+        this.reservedBalance = reservedBalance == null ? Money.ZERO : Money.of(reservedBalance);
         this.updatedAt = updatedAt == null ? Instant.now() : updatedAt;
         this.validate();
     }

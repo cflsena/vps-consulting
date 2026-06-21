@@ -73,7 +73,7 @@ class PartnerCreditTest {
         final var id = UUID.randomUUID();
         assertThatThrownBy(() -> new PartnerCredit(id, new BigDecimal("-1.00"), new BigDecimal("10000.00"), BigDecimal.ZERO, Instant.now()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("cannot be negative");
+                .hasMessageContaining("não pode ser negativo");
     }
 
     @Test
@@ -103,6 +103,6 @@ class PartnerCreditTest {
 
         assertThatThrownBy(() -> credit.adjustCreditLimit(new BigDecimal("-500.00")))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("cannot be negative");
+                .hasMessageContaining("não pode ser negativo");
     }
 }

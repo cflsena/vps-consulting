@@ -61,7 +61,7 @@ class PartnerTest {
                 .document("12345678000100")
                 .build())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("name cannot be blank");
+                .hasMessageContaining("não pode estar vazio");
     }
 
     @Test
@@ -81,7 +81,7 @@ class PartnerTest {
                 .document("   ")
                 .build())
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("document cannot be blank");
+                .hasMessageContaining("não pode estar vazio");
     }
 
     private static Partner newPartner() {

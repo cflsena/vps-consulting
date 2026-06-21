@@ -24,7 +24,7 @@ class CreateOrderItemValidatorTest {
     void shouldRejectEmptyItems() {
         assertThatThrownBy(() -> CreateOrderItemValidator.validate(List.of()))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Order must have at least one item");
+                .hasMessageContaining("pelo menos um item");
     }
 
     @Test

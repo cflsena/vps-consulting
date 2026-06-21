@@ -32,8 +32,8 @@ public class Partner extends Entity<PartnerId> {
         Objects.requireNonNull(this.id, "PartnerId é obrigatório");
         Objects.requireNonNull(this.name, "name é obrigatório");
         Objects.requireNonNull(this.document, "document é obrigatório");
-        if (this.name.isBlank()) throw new IllegalArgumentException("name cannot be blank");
-        if (this.document.isBlank()) throw new IllegalArgumentException("document cannot be blank");
+        if (this.name.isBlank()) throw new IllegalArgumentException("O name não pode estar vazio");
+        if (this.document.isBlank()) throw new IllegalArgumentException("O document não pode estar vazio");
     }
 
 }

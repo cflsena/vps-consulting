@@ -59,7 +59,7 @@ class MoneyTest {
     void shouldRejectNegativeAmount() {
         assertThatThrownBy(() -> new Money(new BigDecimal("-0.01"), "BRL"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("cannot be negative");
+                .hasMessageContaining("não pode ser negativo");
     }
 
     @Test
@@ -79,7 +79,7 @@ class MoneyTest {
         final var usd = new Money(new BigDecimal("10.00"), "USD");
         assertThatThrownBy(() -> brl.add(usd))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Currency mismatch");
+                .hasMessageContaining("Moedas incompatíveis");
     }
 
     @Test
@@ -105,7 +105,7 @@ class MoneyTest {
         final var price = new Money(new BigDecimal("10.00"), "BRL");
         assertThatThrownBy(() -> price.multiply(-1))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Quantity cannot be negative");
+                .hasMessageContaining("não pode ser negativa");
     }
 
     @Test
@@ -131,7 +131,7 @@ class MoneyTest {
         var usd = new Money(new BigDecimal("50.00"), "USD");
         assertThatThrownBy(() -> brl.isGreaterThan(usd))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessageContaining("Currency mismatch");
+                .hasMessageContaining("Moedas incompatíveis");
     }
 
     @Test

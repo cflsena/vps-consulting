@@ -67,7 +67,7 @@ public class Order extends Entity<OrderId> {
         Objects.requireNonNull(this.id, "OrderId é obrigatório");
         Objects.requireNonNull(this.partnerId, "PartnerId é obrigatório");
         if (this.totalAmount.isZero())
-            throw new IllegalArgumentException("Order totalAmount must be greater than zero");
+            throw new IllegalArgumentException("O valor total do pedido deve ser maior que zero");
     }
 
 }
