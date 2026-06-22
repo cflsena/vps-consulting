@@ -1,0 +1,135 @@
+networks:
+  vps-consulting-net:
+    name: vps-consulting-net
+
+services:
+
+  app-java:
+    build: ./java
+    networks:
+      - vps-consulting-net
+    ports:
+      - "${JAVA_APP_PORT:-8080}:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres-java:5432/${JAVA_POSTGRES_DB:-b2b_management}
+      SPRING_DATASOURCE_USERNAME: ${JAVA_POSTGRES_USER:-postgres}
+      SPRING_DATASOURCE_PASSWORD: ${JAVA_POSTGRES_PASSWORD:-postgres}
+      SPRING_RABBITMQ_HOST: rabbitmq-java
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: ${JAVA_RABBITMQ_USERNAME:-guest}
+      SPRING_RABBITMQ_PASSWORD: ${JAVA_RABBITMQ_PASSWORD:-guest}
+    depends_on:
+      postgres-java:
+        condition: service_healthy
+      rabbitmq-java:
+        condition: service_healthy
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+
+  postgres-java:
+    image: postgres:16-alpine
+    networks:
+      - vps-consulting-net
+    environment:
+      POSTGRES_DB: ${JAVA_POSTGRES_DB:-b2b_management}
+      POSTGRES_USER: ${JAVA_POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${JAVA_POSTGRES_PASSWORD:-postgres}
+    ports:
+      - "${JAVA_POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_java_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${JAVA_POSTGRES_USER:-postgres} -d ${JAVA_POSTGRES_DB:-b2b_management}"]
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 5
+
+  rabbitmq-java:
+    image: rabbitmq:4-management
+    networks:
+      - vps-consulting-net
+    ports:
+      - "${JAVA_RABBITMQ_PORT:-5672}:5672"
+      - "${JAVA_RABBITMQ_MANAGEMENT_PORT:-15672}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${JAVA_RABBITMQ_USERNAME:-guest}
+      RABBITMQ_DEFAULT_PASS: ${JAVA_RABBITMQ_PASSWORD:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 15s
+      timeout: 10s
+      start_period: 30s
+      retries: 5
+
+  app-kotlin:
+    build: ./kotlin
+    networks:
+      - vps-consulting-net
+    ports:
+      - "${KOTLIN_APP_PORT:-8081}:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres-kotlin:5432/${KOTLIN_POSTGRES_DB:-credits}
+      DB_USER: ${KOTLIN_POSTGRES_USER:-credits}
+      DB_PASS: ${KOTLIN_POSTGRES_PASSWORD:-credits}
+      RABBITMQ_HOST: rabbitmq-kotlin
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: ${KOTLIN_RABBITMQ_USER:-guest}
+      RABBITMQ_PASS: ${KOTLIN_RABBITMQ_PASS:-guest}
+    depends_on:
+      postgres-kotlin:
+        condition: service_healthy
+      rabbitmq-kotlin:
+        condition: service_healthy
+    restart: on-failure
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+
+  postgres-kotlin:
+    image: postgres:16-alpine
+    networks:
+      - vps-consulting-net
+    environment:
+      POSTGRES_DB: ${KOTLIN_POSTGRES_DB:-credits}
+      POSTGRES_USER: ${KOTLIN_POSTGRES_USER:-credits}
+      POSTGRES_PASSWORD: ${KOTLIN_POSTGRES_PASSWORD:-credits}
+    ports:
+      - "${KOTLIN_POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres_kotlin_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${KOTLIN_POSTGRES_USER:-credits} -d ${KOTLIN_POSTGRES_DB:-credits}"]
+      interval: 10s
+      timeout: 5s
+      start_period: 15s
+      retries: 5
+
+  rabbitmq-kotlin:
+    image: rabbitmq:3-management-alpine
+    networks:
+      - vps-consulting-net
+    ports:
+      - "${KOTLIN_RABBITMQ_PORT:-5673}:5672"
+      - "${KOTLIN_RABBITMQ_MANAGEMENT_PORT:-15673}:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: ${KOTLIN_RABBITMQ_USER:-guest}
+      RABBITMQ_DEFAULT_PASS: ${KOTLIN_RABBITMQ_PASS:-guest}
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 15s
+      timeout: 10s
+      start_period: 30s
+      retries: 5
+
+volumes:
+  postgres_java_data:
+  postgres_kotlin_data:
